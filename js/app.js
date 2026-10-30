@@ -366,6 +366,7 @@
   }
 
   function renderFlight() {
+    if (!cur.pilotId && db.pilots.length === 1) cur.pilotId = db.pilots[0].id; // a lone pilot is the obvious PIC
     const pilot = pilotOf();
     if (pilot && !F.norm(cur.pic)) { cur.pic = pilot.name; cur._lastPic = pilot.name; if (!F.norm(cur.filedBy)) cur.filedBy = pilot.name; }
     renderSelects();
