@@ -23,4 +23,4 @@ node test/fpl.test.js        # validation / composition
 # test/pdf-sample.html       # visual PDF check in a browser
 ```
 
-See `DECISIONS.md` for requirements and the reasons behind them. Data sources are listed in the headers of `data/*.js`.
+Data sources are listed in the headers of `data/*.js`.
