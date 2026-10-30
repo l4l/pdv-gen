@@ -1,15 +1,5 @@
 // ARO/AIS offices — AIC A 19/2026 Anexo ALFA (ANAC). Hint only; verify before filing.
-// Note: the Anexo lists only ICAO indicator, AMHS address, e-mail and phones. "name" and "local"
-// are NOT printed in the AIC; "local" was cross-checked against ANAC MADHEL by ICAO indicator,
-// and the app shows the MADHEL name (data/aerodromes.js) when available.
-window.PDV_ARO_INFO = {
-  aic: "A 19/2026",
-  date: "2026-06-17",
-  es: "Enviar el plan de vuelo completo, firmado y digitalizado en PDF, por correo electrónico a la oficina ARO/AIS del aeródromo de salida (o la más cercana en servicio), indicando en el asunto el N° de vuelo/matrícula; no enviarlo a TWR, ACC u otras dependencias. El usuario es responsable de confirmar telefónicamente con la oficina ARO/AIS la recepción y aceptación del plan. FPL, CHG, DLA y CNL se envían a las direcciones del Anexo ALFA dentro de los tiempos establecidos. Conservar el formulario durante 1 (un) año; ante falla de sistemas, presentarlo en papel.",
-  en: "Send the complete flight plan, signed and scanned as a PDF, by e-mail to the ARO/AIS office of the departure aerodrome (or the nearest one in service), with the flight number/registration in the subject line; do not send it to TWR, ACC or other units. The user is responsible for phoning the ARO/AIS office to confirm receipt and acceptance. FPL, CHG, DLA and CNL go to the Annex ALFA addresses within the established times. Keep the form for 1 (one) year; if systems fail, file on paper."
-};
 window.PDV_ARO = [
-  // FIR Resistencia
   {"name":"Corrientes","icao":"SARC","local":"CRR","email":"accrr@eana.com.ar","phone":["(+54 379) 4458844","ARO-AIS móvil/mobile (+54 9 379) 488177"],"amhs":"SARCZPZX"},
   {"name":"Resistencia","icao":"SARE","local":"SIS","email":"acsis@eana.com.ar","phone":["(+54 362) 4436280 - INT / EXT 32146-32151","(+54 3624) 436291/2/3"],"amhs":"SAREZPZX"},
   {"name":"Formosa","icao":"SARF","local":"FSA","email":"acfsa@eana.com.ar","phone":["(+54 370) 4454448"],"amhs":"SARFZPZX"},
@@ -18,7 +8,6 @@ window.PDV_ARO = [
   {"name":"Posadas","icao":"SARP","local":"POS","email":"acpos@eana.com.ar","phone":["(+54 376) 4451903"],"amhs":"SARPZPZX"},
   {"name":"Goya","icao":"SATG","local":"GOY","email":"acgoy@eana.com.ar","phone":["(+54 3624) 436291-2-3 - INT / EXT 32972"],"amhs":"SATGZPZX"},
   {"name":"Reconquista","icao":"SATR","local":"RTA","email":"acrta@eana.com.ar","phone":["(+54 3624) 436291/2/3 - INT / EXT 32941"],"amhs":"SATRZPZX"},
-  // FIR Córdoba
   {"name":"Córdoba","icao":"SACO","local":"CBA","email":"accba@eana.com.ar","phone":["(+54 351) 4756428"],"amhs":"SACOZPZX"},
   {"name":"Catamarca","icao":"SANC","local":"CAT","email":"accat@eana.com.ar","phone":["(+54 383) 4453686"],"amhs":"SANCZPZX"},
   {"name":"Santiago del Estero","icao":"SANE","local":"SDE","email":"acsde@eana.com.ar","phone":["(+54 385) 4340710 - INT / EXT 36960"],"amhs":"SANEZPZX"},
@@ -29,14 +18,12 @@ window.PDV_ARO = [
   {"name":"Jujuy","icao":"SASJ","local":"JUJ","email":"acjuj@eana.com.ar","phone":["(+54 388) 4911102","(+54 388) 4911104 - INT / EXT 131 / RTI 58212"],"amhs":"SASJZPZX"},
   {"name":"Termas de Río Hondo","icao":"SANR","local":"TRH","email":"actrh@eana.com.ar","phone":["(+54 11) 44802211/9 - INT / EXT 36926"],"amhs":"SANRZPZX"},
   {"name":"Río Cuarto","icao":"SAOC","local":"TRC","email":"acrcu@eana.com.ar","phone":["(+54 358) 4970883"],"amhs":"SAOCZPZX"},
-  // FIR Mendoza
   {"name":"San Juan","icao":"SANU","local":"JUA","email":"acjua@eana.com.ar","phone":["(+54 264) 4250400 - INT / EXT 47614"],"amhs":"SANUZPZX"},
   {"name":"Mendoza","icao":"SAME","local":"DOZ","email":"acdoz@eana.com.ar","phone":["(+54 261) 4487486 - INT / EXT 65413 - 65337"],"amhs":"SAMEZPZX"},
   {"name":"Malargüe","icao":"SAMM","local":"MLG","email":"acmlg@eana.com.ar","phone":["(+54 260) 4471265"],"amhs":"SAMMZPZX"},
   {"name":"San Rafael","icao":"SAMR","local":"SRA","email":"acsra@eana.com.ar","phone":["(+54 260) 4430703"],"amhs":"SAMRZPZX"},
   {"name":"San Luis","icao":"SAOU","local":"UIS","email":"acuis@eana.com.ar","phone":["(+54 266) 4423047 - INT / RTI 43317","Móvil / Mobile (+54 9 11) 23604976"],"amhs":"SAOUZPZX"},
   {"name":"Villa Reynolds","icao":"SAOR","local":"RYD","email":"acryd@eana.com.ar","phone":["(+54 11) 54910878"],"amhs":"SAORZPZX"},
-  // FIR Comodoro Rivadavia
   {"name":"Comodoro Rivadavia","icao":"SAVC","local":"CRV","email":"accrv@eana.com.ar","phone":["(+54 297) 4549439 - INT / EXT 50356","5374714, 4548084"],"amhs":"SAVCZPZX"},
   {"name":"Esquel","icao":"SAVE","local":"ESQ","email":"acesq@eana.com.ar","phone":["(+54 294) 5451354 - INT / EXT 45304 - 45300"],"amhs":"SAVEZPZX"},
   {"name":"Trelew","icao":"SAVT","local":"TRE","email":"actre@eana.com.ar","phone":["(+54 280) 4421009 - INT / EXT 46309","Corp.Ais-Com (+54 9 11) 31977395"],"amhs":"SAVTZPZX"},
@@ -46,7 +33,6 @@ window.PDV_ARO = [
   {"name":"Río Grande","icao":"SAWE","local":"GRA","email":"acgde@eana.com.ar","phone":["(+54 2964) 492351 - INT / EXT 44209"],"amhs":"SAWEZPZX"},
   {"name":"Ushuaia","icao":"SAWH","local":"USU","email":"acusu@eana.com.ar","phone":["(+54 2901) 434390","(+54 11) 44802385 - INT / EXT 44306"],"amhs":"SAWHZPZX"},
   {"name":"Río Gallegos","icao":"SAWG","local":"GAL","email":"acgal@eana.com.ar","phone":["(+54 2966) 442044"],"amhs":"SAWGZPZX"},
-  // FIR Ezeiza
   {"name":"Concordia","icao":"SAAC","local":"DIA","email":"acdia@eana.com.ar","phone":["(+54 11) 44802210"],"amhs":"SAACZPZX"},
   {"name":"Paraná","icao":"SAAP","local":"PAR","email":"acpar@eana.com.ar","phone":["(+54 343) 4261914 - INT / EXT 67324 - 67325"],"amhs":"SAAPZPZX"},
   {"name":"Rosario","icao":"SAAR","local":"ROS","email":"acros@eana.com.ar","phone":["(54 341) 4513202 - INT / EXT 1120 - 1134","(+54 341) 5038804"],"amhs":"SAARZPZX"},

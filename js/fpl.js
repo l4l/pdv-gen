@@ -1,6 +1,3 @@
-// Flight plan logic: normalisation, Item 18 composition, validation, FPL message.
-// Rules: AIP SUP A 94/2024 (ENR 1.10) and PROGEN-ARO (Res. ANAC 35/2025). See DECISIONS.md D-017.
-// Pure functions, no DOM. Works in the browser (window.PDV_FPL) and in node (module.exports).
 (function (root) {
   'use strict';
 
@@ -12,7 +9,6 @@
     'L1', 'O1', 'O2', 'O3', 'O4', 'S1', 'S2', 'T1', 'T2'];
   const STS = ['ALTRV', 'ATFMX', 'FFR', 'FLTCK', 'HAZMAT', 'HEAD', 'HOSP', 'HUM', 'MARSA', 'MEDEVAC', 'NONRVSM', 'SAR', 'STATE'];
 
-  // Item 18 indicators in Doc 4444 order; `key` is the flight-form field holding the value.
   const ITEM18 = [
     ['STS', 'sts'], ['PBN', 'pbn'], ['NAV', 'nav'], ['COM', 'com'], ['DAT', 'dat'], ['SUR', 'sur'],
     ['DEP', 'depName'], ['DEST', 'destName'], ['DOF', 'dof'], ['REG', 'reg'], ['EET', 'eet18'],
@@ -20,16 +16,13 @@
     ['PER', 'per'], ['ALTN', 'altnName'], ['RALT', 'ralt'], ['TALT', 'talt'], ['RIF', 'rif'], ['RMK', 'rmk'],
   ];
 
-  // Uppercase, strip accents (transmitted items are plain ITA-2/IA-5), collapse spaces.
   function norm(s) {
     return String(s == null ? '' : s)
       .normalize('NFD').replace(/[̀-ͯ]/g, '')
       .toUpperCase().replace(/\s+/g, ' ').trim();
   }
-  // Item 7: registration without hyphens or spaces (LV-ABC -> LVABC).
   function normId(s) { return norm(s).replace(/[^A-Z0-9]/g, ''); }
 
-  // Split equipment strings like "SDE2FGY" into codes; two-char codes win when valid.
   function tokens(s, valid) {
     const out = [];
     for (let i = 0; i < s.length;) {
@@ -39,7 +32,6 @@
     return out;
   }
 
-  // YYYY-MM-DD -> YYMMDD
   function dofFromDate(iso) {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
     return m ? m[1].slice(2) + m[2] + m[3] : '';
@@ -47,9 +39,8 @@
   const isHHMM = (s) => /^([01]\d|2[0-3])[0-5]\d$/.test(s);
   const isDur = (s) => /^\d{2}[0-5]\d$/.test(s);
   const minutes = (s) => +s.slice(0, 2) * 60 + +s.slice(2);
-  const isAd = (s) => /^[A-Z]{4}$/.test(s) || /^[A-Z0-9]{3}$/.test(s); // ICAO or national 3-letter (D-010)
+  const isAd = (s) => /^[A-Z]{4}$/.test(s) || /^[A-Z0-9]{3}$/.test(s);
 
-  // Normalised copy of a flight form, ready for composition/PDF.
   function normalize(f) {
     const n = { ...f };
     n.item7 = normId(f.item7);
@@ -58,13 +49,11 @@
     for (const [, k] of ITEM18) if (k !== 'dof') n[k] = norm(f[k]);
     n.reg = normId(f.reg);
     n.route = norm(f.route);
-    // DOF/ only when the flight is not today (UTC): required for advance filing (PROGEN-ARO), omitted otherwise (D-023).
     n.dof = f.date && f.date !== new Date().toISOString().slice(0, 10) ? dofFromDate(f.date) : '';
     if (/^\d{1,2}$/.test(n.pob)) n.pob = n.pob.padStart(3, '0');
     return n;
   }
 
-  // Item 18 text: indicators in order, "0" when empty. Takes a normalised flight.
   function item18(n) {
     const parts = [];
     for (const [ind, key] of ITEM18) {
@@ -79,7 +68,6 @@
     return parts.length ? parts.join(' ') : '0';
   }
 
-  // Item 19 as transmitted in SPL messages (also used for the preview).
   function item19(n) {
     const p = [];
     if (n.endurance) p.push('E/' + n.endurance);
@@ -96,7 +84,6 @@
     return p.join(' ');
   }
 
-  // ICAO FPL message (items 7–18), plus item 19 on a separate line for reference.
   function message(f) {
     const n = normalize(f);
     const eq = (n.eq10a || '') + '/' + (n.eq10b || '');
@@ -111,7 +98,6 @@
     ].join('\n');
   }
 
-  // Validation. Returns { field: {es, en} }; empty object = valid. Errors block PDF (D-009).
   function validate(f) {
     const n = normalize(f);
     const e = {};
@@ -121,12 +107,10 @@
       if (/[-()\/]/.test(n[k] || '')) err(k, 'No usar - ( ) / en texto libre', 'Do not use - ( ) / in free text');
     };
 
-    // Item 7
     if (!n.item7) req('item7');
     else if (!/^[A-Z0-9]{2,7}$/.test(n.item7)) err('item7', 'Máx. 7 letras/números, sin guiones', 'Max 7 letters/digits, no hyphens');
-    const isReg = !/^[A-Z]{3}\d{1,4}[A-Z]?$/.test(n.item7); // not an airline designator + number
+    const isReg = !/^[A-Z]{3}\d{1,4}[A-Z]?$/.test(n.item7);
 
-    // Item 8
     if (!/^[IVYZ]$/.test(n.rules)) err('rules', 'I, V, Y o Z', 'I, V, Y or Z');
     if (n.flightType && !/^[SNGMX]$/.test(n.flightType)) err('flightType', 'S, N, G, M o X', 'S, N, G, M or X');
     if (isReg && n.flightType && !/^[GMNX]$/.test(n.flightType))
@@ -134,14 +118,12 @@
     if ((n.rules === 'Y' || n.rules === 'Z') && !/ (VFR|IFR)( |$)/.test(n.route))
       err('route', 'Y/Z: indicar punto de cambio de reglas (… VFR / … IFR)', 'Y/Z: give the rule-change point (… VFR / … IFR)');
 
-    // Item 9
     if (n.number && !/^([2-9]|[1-9]\d)$/.test(n.number)) err('number', 'Sólo si hay más de una aeronave (2–99)', 'Only for more than one aircraft (2–99)');
     if (!n.acType) req('acType');
     else if (!/^[A-Z][A-Z0-9]{1,3}$/.test(n.acType)) err('acType', 'Designador OACI de 2–4 caracteres o ZZZZ', '2–4 char ICAO designator or ZZZZ');
     if (n.acType === 'ZZZZ' && !n.typ) err('typ', 'ZZZZ requiere TYP/', 'ZZZZ requires TYP/');
     if (!/^[LMHJ]$/.test(n.wake)) err('wake', 'L, M, H o J', 'L, M, H or J');
 
-    // Item 10
     const a = tokens(n.eq10a, EQ10A);
     if (!n.eq10a) req('eq10a');
     else if (a.some((t) => !EQ10A.includes(t))) err('eq10a', 'Código inválido: ' + a.filter((t) => !EQ10A.includes(t)).join(' '), 'Invalid code: ' + a.filter((t) => !EQ10A.includes(t)).join(' '));
@@ -154,19 +136,16 @@
     if (a.includes('R') && !n.pbn) err('pbn', 'R en casilla 10 requiere PBN/', 'R in item 10 requires PBN/');
     if (a.includes('Z') && !n.nav && !n.com && !n.dat) err('nav', 'Z en casilla 10 requiere NAV/, COM/ o DAT/', 'Z in item 10 requires NAV/, COM/ or DAT/');
 
-    // Item 13
     if (!n.dep) req('dep');
     else if (n.dep !== 'AFIL' && !isAd(n.dep)) err('dep', 'Indicador OACI (4), local (3) o ZZZZ', 'ICAO (4), local (3) or ZZZZ');
     if (['ZZZZ', 'AFIL'].includes(n.dep) && !n.depName) err('depName', 'ZZZZ/AFIL requiere DEP/', 'ZZZZ/AFIL requires DEP/');
     if (!isHHMM(n.eobt)) err('eobt', 'Hora UTC HHMM', 'UTC time HHMM');
     if (!f.date) err('date', 'Obligatorio', 'Required');
 
-    // Item 15
     if (!/^(K\d{4}|N\d{4}|M\d{3})$/.test(n.speed)) err('speed', 'K0180, N0095 o M082', 'K0180, N0095 or M082');
     if (!/^(F\d{3}|A\d{3}|S\d{4}|M\d{4}|VFR)$/.test(n.level)) err('level', 'A045, F085, S1130, M0840 o VFR', 'A045, F085, S1130, M0840 or VFR');
     if (!n.route) err('route', 'Obligatorio (ej. DCT)', 'Required (e.g. DCT)');
 
-    // Item 16
     if (!n.dest) req('dest');
     else if (!isAd(n.dest)) err('dest', 'Indicador OACI (4), local (3) o ZZZZ', 'ICAO (4), local (3) or ZZZZ');
     if (n.dest === 'ZZZZ' && !n.destName) err('destName', 'ZZZZ requiere DEST/', 'ZZZZ requires DEST/');
@@ -174,7 +153,6 @@
     for (const k of ['altn1', 'altn2']) if (n[k] && !isAd(n[k])) err(k, 'Indicador OACI (4), local (3) o ZZZZ', 'ICAO (4), local (3) or ZZZZ');
     if ((n.altn1 === 'ZZZZ' || n.altn2 === 'ZZZZ') && !n.altnName) err('altnName', 'ZZZZ requiere ALTN/', 'ZZZZ requires ALTN/');
 
-    // Item 18
     if (n.sts && n.sts.split(' ').some((s) => !STS.includes(s))) err('sts', 'Valores: ' + STS.join(' '), 'Values: ' + STS.join(' '));
     if (n.pbn) {
       const p = n.pbn.replace(/ /g, '').match(/.{1,2}/g) || [];
@@ -188,7 +166,6 @@
     if (!isReg && !n.reg) err('reg', 'Con designador de explotador se requiere REG/', 'REG/ is required with an operator designator');
     for (const k of ['depName', 'destName', 'altnName', 'opr', 'rmk', 'typ', 'nav', 'com', 'dat', 'sur', 'eet18', 'dle', 'rif', 'orgn', 'ralt', 'talt']) freeText(k);
 
-    // Item 19
     if (!isDur(n.endurance)) err('endurance', 'Autonomía HHMM', 'Endurance HHMM');
     else if (isDur(n.eet) && minutes(n.endurance) <= minutes(n.eet))
       err('endurance', 'Debe ser mayor que la EET total', 'Must be greater than total EET');
@@ -205,7 +182,7 @@
     return e;
   }
 
-  const api = { tokens, EQ10A, EQ10B, PBN, STS, ITEM18, norm, normId, normalize, item18, item19, message, validate, dofFromDate };
+  const api = { EQ10A, EQ10B, tokens, norm, normId, normalize, item18, item19, message, validate, dofFromDate };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PDV_FPL = api;
 })(typeof window !== 'undefined' ? window : globalThis);

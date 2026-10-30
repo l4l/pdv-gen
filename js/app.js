@@ -1,4 +1,3 @@
-// UI: flight form, aircraft and pilot profiles, drafts, import/export, PDF. See DECISIONS.md D-007..D-017.
 (function () {
   'use strict';
   const F = window.PDV_FPL, S = window.PDV_STORE, I18N = window.PDV_I18N;
@@ -21,7 +20,6 @@
   const t = (k) => I18N[lang][k] || I18N.es[k] || k;
   const persist = () => { S.save(db); $('#storage-warn').hidden = S.ok; };
 
-  // ---------- paths into nested objects ("radio.U") ----------
   const get = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
   const set = (o, p, v) => {
     const ks = p.split('.');
@@ -31,7 +29,6 @@
   const clone = (o) => JSON.parse(JSON.stringify(o));
   const todayUTC = () => new Date().toISOString().slice(0, 10);
 
-  // ---------- lookups ----------
   const AD = window.PDV_AERODROMES || [];
   const AC = window.PDV_AIRCRAFT || [];
   const ARO = window.PDV_ARO || [];
@@ -51,7 +48,6 @@
     $('#dl-ac').replaceChildren(...AC.map((a) => h('option', { value: a.t }, a.n + ' · ' + a.w)));
   }
 
-  // ---------- profiles ----------
   const EQUIP = () => ({
     radio: { U: false, V: true, E: true },
     survival: { any: false, P: false, D: false, M: false, J: false },
@@ -80,7 +76,6 @@
     ...EQUIP(), ...(plane ? planeToFlight(plane) : {}),
   });
 
-  // Plane validation reuses flight rules on a synthetic flight and keeps plane-owned fields.
   const PLANE_ERR_KEYS = new Set([...PLANE_KEYS, 'item7', 'dNumber', 'dCapacity', 'dColour']);
   function validatePlane(p) {
     const fake = { ...newFlight(null, null), ...planeToFlight(p), dep: 'SADF', eobt: '1200', dest: 'SADF', eet: '0001', level: 'VFR', pob: '1', pic: 'X' };
@@ -89,12 +84,10 @@
     const e = F.validate(fake);
     const out = {};
     for (const [k, v] of Object.entries(e)) if (PLANE_ERR_KEYS.has(k)) out[k === 'item7' ? 'reg' : k] = v;
-    if (!p.opr) delete out.opr; // OPR/ may be filled per flight
+    if (!p.opr) delete out.opr;
     return out;
   }
 
-  // ---------- field specs ----------
-  // k: state path; w: width in ch; type: text|seg|textarea|date|equip; show: visibility predicate.
   const fld = (k, o = {}) => ({ k, type: 'text', w: 8, up: true, ...o });
   const isZ = (v) => F.norm(v) === 'ZZZZ';
   const AIRCRAFT_FIELDS = [
@@ -107,17 +100,18 @@
     fld('eq10a', { w: 14, hint: 'h.eq10a', pick: 'a' }),
     fld('eq10b', { w: 10, hint: 'h.eq10b', pick: 'b' }),
   ];
-  const MORE18 = ['sts', 'pbn', 'nav', 'com', 'dat', 'sur', 'reg', 'eet18', 'sel', 'typ', 'code', 'dle', 'orgn', 'per', 'ralt', 'talt', 'rif']
-    .map((k) => fld(k, { w: k === 'sel' || k === 'per' ? 6 : 18, label: (k === 'eet18' ? 'EET' : k.toUpperCase()) + '/', hint: k === 'typ' ? 'h.typ' : null }));
+  const ind18 = (k) => fld(k, { w: k === 'sel' || k === 'per' ? 6 : 18, label: (k === 'eet18' ? 'EET' : k.toUpperCase()) + '/', hint: k === 'typ' ? 'h.typ' : null });
+  const MORE18 = ['sts', 'pbn', 'nav', 'com', 'dat', 'sur', 'reg', 'eet18', 'sel', 'typ', 'code', 'dle', 'orgn', 'per', 'ralt', 'talt', 'rif'].map(ind18);
+  const dinghyOn = (s) => s.dinghies && s.dinghies.any;
   const EQUIP_FIELDS = [
     fld('radio', { type: 'equip', letters: ['U', 'V', 'E'] }),
     fld('survival', { type: 'equip', letters: ['P', 'D', 'M', 'J'], any: true }),
     fld('jackets', { type: 'equip', letters: ['L', 'F', 'U', 'V'], any: true }),
     fld('dinghies', { type: 'equip', letters: [], any: true }),
-    fld('dinghies.number', { w: 3, lk: 'f.dNumber', err: 'dNumber', show: (s) => s.dinghies && s.dinghies.any }),
-    fld('dinghies.capacity', { w: 4, lk: 'f.dCapacity', err: 'dCapacity', show: (s) => s.dinghies && s.dinghies.any }),
-    fld('dinghies.cover', { type: 'check', lk: 'f.dCover', show: (s) => s.dinghies && s.dinghies.any }),
-    fld('dinghies.colour', { w: 14, lk: 'f.dColour', err: 'dColour', show: (s) => s.dinghies && s.dinghies.any }),
+    fld('dinghies.number', { w: 3, lk: 'f.dNumber', err: 'dNumber', show: dinghyOn }),
+    fld('dinghies.capacity', { w: 4, lk: 'f.dCapacity', err: 'dCapacity', show: dinghyOn }),
+    fld('dinghies.cover', { type: 'check', lk: 'f.dCover', show: dinghyOn }),
+    fld('dinghies.colour', { w: 14, lk: 'f.dColour', err: 'dColour', show: dinghyOn }),
   ];
 
   const FLIGHT_SECTIONS = [
@@ -172,8 +166,7 @@
       fld('colour', { w: 28 }),
       fld('opr', { w: 24 }),
     ] },
-    { id: 'p-18', title: 's.plane18', fold: true, fields: ['pbn', 'nav', 'com', 'dat', 'sur', 'sel', 'code', 'typ', 'per']
-      .map((k) => fld(k, { w: k === 'sel' || k === 'per' ? 6 : 18, label: k.toUpperCase() + '/', hint: k === 'typ' ? 'h.typ' : null })) },
+    { id: 'p-18', title: 's.plane18', fold: true, fields: ['pbn', 'nav', 'com', 'dat', 'sur', 'sel', 'code', 'typ', 'per'].map(ind18) },
     { id: 'p-19', title: 's.plane19', fold: true, summary: equipSummary, fields: EQUIP_FIELDS },
     { id: 'p-notes', title: 'f.notes', fold: true, fields: [fld('notes', { type: 'textarea', up: false, lk: 'f.notes' })] },
   ];
@@ -185,11 +178,9 @@
     return 'R/' + r + ' · S/' + g(n.survival, ['P', 'D', 'M', 'J']) + ' · J/' + g(n.jackets, ['L', 'F', 'U', 'V']) + ' · D/' + (n.dinghies && n.dinghies.any ? n.dinghies.number || '?' : '—');
   }
 
-  // ---------- generic form renderer ----------
-  // Builds inputs bound to `state`; calls onChange(path) after every edit. Returns {update(errors, showAll)}.
   function buildForm(form, sections, state, onChange) {
     const touched = new Set();
-    const rows = []; // {spec, wrap, input, errEl, hintEl}
+    const rows = [];
 
     const fieldEl = (sp) => {
       const id = 'f-' + form.id + '-' + sp.k.replace('.', '-');
@@ -236,7 +227,7 @@
           if (sp.up && input.value !== input.value.toUpperCase()) {
             const p = input.selectionStart;
             input.value = input.value.toUpperCase();
-            try { input.setSelectionRange(p, p); } catch (e) { /* date inputs */ }
+            try { input.setSelectionRange(p, p); } catch (e) {}
           }
           change(input.value);
         });
@@ -262,23 +253,22 @@
     form.replaceChildren(...sections.map((s) => sectionEl(s, false)));
 
     return {
-      touched,
       update(errors, showAll) {
         for (const r of rows) {
           const key = r.sp.err || r.sp.k;
           const e = errors[key];
-          const shown = e && (showAll || touched.has(key) || (get(state, r.sp.k) !== '' && get(state, r.sp.k) != null));
+          const v = get(state, r.sp.k);
+          const shown = e && (showAll || touched.has(key) || (v !== '' && v != null));
           r.errEl.textContent = shown ? e[lang] : '';
           r.wrap.classList.toggle('bad', !!shown);
           r.wrap.hidden = r.sp.show ? !r.sp.show(state) : false;
-          if (r.sp.ad) r.hintEl.replaceChildren(...adHint(get(state, r.sp.k)));
-          if (r.sp.localTime) r.hintEl.textContent = localHint(get(state, r.sp.k));
+          if (r.sp.ad) r.hintEl.replaceChildren(...adHint(v));
+          if (r.sp.localTime) r.hintEl.textContent = localHint(v);
         }
-        // Open folded sections that hold a visible error or (for advanced groups) any value.
         for (const d of $$('details', form)) {
-          const keys = $$('.field', d).map((w) => rows.find((r) => r.wrap === w)).filter(Boolean);
-          if (keys.some((r) => r.wrap.classList.contains('bad'))) d.open = true;
-          else if (d.dataset.sec === 'more18' && keys.some((r) => r.sp.type === 'text' && get(state, r.sp.k))) d.open = true;
+          const inner = $$('.field', d).map((w) => rows.find((r) => r.wrap === w)).filter(Boolean);
+          if (inner.some((r) => r.wrap.classList.contains('bad'))) d.open = true;
+          else if (d.dataset.sec === 'more18' && inner.some((r) => r.sp.type === 'text' && get(state, r.sp.k))) d.open = true;
         }
         for (const el of $$('[data-sum]', form)) {
           const sec = el.closest('[data-sec]')._sec;
@@ -286,7 +276,6 @@
         }
       },
       firstError() { return rows.find((r) => r.wrap.classList.contains('bad')); },
-      // Push a programmatic state change back into its control without rebuilding (keeps focus).
       sync(path) {
         const r = rows.find((x) => x.sp.k === path);
         if (!r) return;
@@ -306,10 +295,9 @@
     if (other) out.push(' · ', h('b', {}, other));
     return out;
   }
-  // Item 10 multi-select: checkbox grid that writes the code string in canonical order; typing stays in sync.
   function equipPicker(sp, input, change) {
     const codes = sp.pick === 'a' ? F.EQ10A : F.EQ10B;
-    const MODES = ['A', 'C', 'E', 'H', 'I', 'L', 'P', 'S', 'X']; // 10b: one transponder mode only
+    const MODES = ['A', 'C', 'E', 'H', 'I', 'L', 'P', 'S', 'X'];
     const desc = window.PDV_EQ[sp.pick];
     const current = () => new Set(F.tokens(F.norm(input.value).replace(/ /g, ''), codes));
     const boxes = codes.map((c) => {
@@ -345,11 +333,10 @@
   function localHint(v) {
     const c = F.norm(v);
     if (!/^([01]\d|2[0-3])[0-5]\d$/.test(c)) return 'HHMM';
-    const m = (+c.slice(0, 2) * 60 + +c.slice(2) - 180 + 1440) % 1440; // Argentina UTC-3, no DST
+    const m = (+c.slice(0, 2) * 60 + +c.slice(2) - 180 + 1440) % 1440;
     return '= ' + String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0') + ' ' + t('h.local');
   }
 
-  // ---------- flight tab ----------
   let cur = db.current || newFlight(db.planes[0], db.pilots[0]);
   let flightForm, showAll = false;
 
@@ -366,7 +353,7 @@
   }
 
   function renderFlight() {
-    if (!cur.pilotId && db.pilots.length === 1) cur.pilotId = db.pilots[0].id; // a lone pilot is the obvious PIC
+    if (!cur.pilotId && db.pilots.length === 1) cur.pilotId = db.pilots[0].id;
     const pilot = pilotOf();
     if (pilot && !F.norm(cur.pic)) { cur.pic = pilot.name; cur._lastPic = pilot.name; if (!F.norm(cur.filedBy)) cur.filedBy = pilot.name; }
     renderSelects();
@@ -374,11 +361,13 @@
     refreshFlight();
   }
 
+  function suggestWake(o, ui) {
+    const a = acByType.get(F.norm(o.acType));
+    if (a && o.wake !== a.w) { o.wake = a.w; ui.sync('wake'); }
+  }
+
   function onFlightChange(path) {
-    if (path === 'acType') { // suggest wake category from the curated list
-      const a = acByType.get(F.norm(cur.acType));
-      if (a && cur.wake !== a.w) { cur.wake = a.w; flightForm.sync('wake'); }
-    }
+    if (path === 'acType') suggestWake(cur, flightForm);
     if (path === 'pic' && (!cur.filedBy || cur.filedBy === cur._lastPic)) {
       cur.filedBy = cur.pic;
       const fb = $('#flight-form [name="filedBy"]');
@@ -392,7 +381,7 @@
   function refreshFlight() {
     const errors = F.validate(cur);
     flightForm.update(errors, showAll);
-    const blank = !cur.item7 && !cur.planeId; // nothing chosen yet: don't greet with a wall of errors
+    const blank = !cur.item7 && !cur.planeId;
     $('#fpl-msg').textContent = blank ? '—' : F.message(cur);
     $('#fpl-19').textContent = (!blank && F.item19(F.normalize(cur))) || '—';
     const n = Object.keys(errors).length;
@@ -456,11 +445,14 @@
       signature: pilot && pilot.signature && F.norm(pilot.name) === F.norm(cur.pic) ? pilot.signature : null,
     };
   }
+  function showErrors() {
+    showAll = true; refreshFlight();
+    const r = flightForm.firstError();
+    if (r) r.wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
   function makePdf() {
     if (Object.keys(F.validate(cur)).length) {
-      showAll = true; refreshFlight();
-      const r = flightForm.firstError();
-      if (r) { r.wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      showErrors();
       toast(t('msg.fixFirst'));
       return null;
     }
@@ -469,7 +461,6 @@
   }
   const pdfName = () => { const n = F.normalize(cur); return `FPL_${n.item7}_${F.dofFromDate(cur.date)}_${n.dep}-${n.dest}_${n.eobt}.pdf`; };
 
-  // ---------- drafts ----------
   function saveDraft() {
     const n = F.normalize(cur);
     const label = [n.item7, (n.dep || '?') + '→' + (n.dest || '?'), cur.date, n.eobt && n.eobt + 'Z'].filter(Boolean).join(' ');
@@ -494,7 +485,6 @@
     if (!dlg.open) dlg.showModal();
   }
 
-  // Two-step delete: no confirm() in sandboxed viewers, and it is friendlier anyway.
   function confirmBtn(fn) {
     const b = h('button', { class: 'ghost small danger', type: 'button' }, t('btn.del'));
     b.addEventListener('click', () => {
@@ -505,7 +495,6 @@
     return b;
   }
 
-  // ---------- planes tab ----------
   function renderPlanes() {
     const list = $('#plane-list');
     if (!db.planes.length) { list.replaceChildren(h('p', { class: 'empty' }, t('empty.planes'))); return; }
@@ -525,7 +514,7 @@
     const dlg = $('#dlg-plane'), form = $('#plane-form');
     let showAllP = false;
     const ui = buildForm(form, PLANE_SECTIONS, p, (path) => {
-      if (path === 'acType') { const a = acByType.get(F.norm(p.acType)); if (a && p.wake !== a.w) { p.wake = a.w; ui.sync('wake'); } }
+      if (path === 'acType') suggestWake(p, ui);
       ui.update(validatePlane(p), showAllP);
     });
     const save = () => {
@@ -548,7 +537,6 @@
     if (!dlg.open) dlg.showModal();
   }
 
-  // ---------- pilots tab ----------
   function renderPilots() {
     const list = $('#pilot-list');
     if (!db.pilots.length) { list.replaceChildren(h('p', { class: 'empty' }, t('empty.pilots'))); return; }
@@ -589,7 +577,6 @@
     name.focus();
   }
 
-  // Canvas signature, stored trimmed as a PNG data URL (D-013).
   function signaturePad(initial) {
     const c = h('canvas', { class: 'sig', width: 600, height: 200 });
     const ctx = c.getContext('2d');
@@ -623,7 +610,6 @@
     };
   }
 
-  // ---------- import / export ----------
   function download(name, blob) {
     const a = h('a', { href: URL.createObjectURL(blob), download: name });
     document.body.append(a); a.click(); a.remove();
@@ -652,7 +638,6 @@
     });
   }
 
-  // ---------- chrome ----------
   let toastTimer;
   function toast(msg) {
     const el = $('#toast');
@@ -663,7 +648,7 @@
     for (const b of $$('[data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === name));
     for (const s of $$('.tab')) s.hidden = s.id !== 'tab-' + name;
     document.body.dataset.tab = name;
-    try { sessionStorage.setItem('pdvgen.tab', name); } catch (e) { /* ignore */ }
+    try { sessionStorage.setItem('pdvgen.tab', name); } catch (e) {}
   }
   function applyLang() {
     document.documentElement.lang = lang;
@@ -687,12 +672,11 @@
   $('#btn-export').addEventListener('click', doExport);
   $('#btn-import').addEventListener('click', () => $('#file-import').click());
   $('#file-import').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) doImport(f); e.target.value = ''; });
-  // The PDF buttons are disabled while errors exist; clicking the status reveals them all.
-  $$('.status').forEach((s) => s.addEventListener('click', () => { showAll = true; refreshFlight(); const r = flightForm.firstError(); if (r) r.wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }));
+  $$('.status').forEach((s) => s.addEventListener('click', showErrors));
 
   persist();
   applyLang();
   let tab = 'flight';
-  try { tab = db.planes.length ? sessionStorage.getItem('pdvgen.tab') || 'flight' : 'planes'; } catch (e) { /* ignore */ }
+  try { tab = db.planes.length ? sessionStorage.getItem('pdvgen.tab') || 'flight' : 'planes'; } catch (e) {}
   showTab(tab);
 })();

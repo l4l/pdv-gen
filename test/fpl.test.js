@@ -1,4 +1,3 @@
-// Run: node test/fpl.test.js
 const assert = require('assert');
 const F = require('../js/fpl.js');
 
@@ -18,14 +17,14 @@ assert.strictEqual(F.message(base),
 assert.strictEqual(F.item19(F.normalize(base)), 'E/0430 P/002 R/VE A/BLANCO Y ROJO C/JUAN PEREZ');
 
 assert.deepStrictEqual(v({ item7: 'LVABCDEF' }), ['item7']);
-assert.deepStrictEqual(v({ flightType: 'S' }), ['flightType']);           // registration needs G/M/N/X
+assert.deepStrictEqual(v({ flightType: 'S' }), ['flightType']);
 assert.deepStrictEqual(v({ opr: '' }), ['opr']);
-assert.deepStrictEqual(v({ endurance: '0230' }), ['endurance']);          // must exceed EET
+assert.deepStrictEqual(v({ endurance: '0230' }), ['endurance']);
 assert.deepStrictEqual(v({ eq10a: 'SQ' }), ['eq10a']);
 assert.deepStrictEqual(v({ eq10a: 'SDFGRY' }), ['pbn']);
 assert.deepStrictEqual(v({ eq10a: 'SDFGRY', pbn: 'B2C2' }), []);
 assert.deepStrictEqual(v({ dep: 'ZZZZ' }), ['depName']);
-assert.deepStrictEqual(v({ dep: 'FDO' }), []);                            // national 3-letter accepted
+assert.deepStrictEqual(v({ dep: 'FDO' }), []);
 assert.deepStrictEqual(v({ level: 'A45' }), ['level']);
 assert.deepStrictEqual(v({ rules: 'Y' }), ['route']);
 assert.deepStrictEqual(v({ rules: 'Y', route: 'DCT SAN VFR' }), []);
@@ -38,5 +37,5 @@ const z = F.normalize({ ...base, dep: 'ZZZZ', depName: 'Estancia La Paz', acType
 assert.strictEqual(F.item18(z), 'DEP/ESTANCIA LA PAZ DOF/261031 REG/LVABC TYP/ULTRALIVIANO OPR/AEROCLUB SAN FERNANDO');
 assert.strictEqual(F.item18(F.normalize({ ...base, opr: '', date: '' })), '0');
 const today = new Date().toISOString().slice(0, 10);
-assert.ok(!F.message({ ...base, date: today }).includes('DOF/'));   // same-day: no DOF (D-023)
+assert.ok(!F.message({ ...base, date: today }).includes('DOF/'));
 console.log('ok');

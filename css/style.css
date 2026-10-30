@@ -19,7 +19,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .mono, pre, input.up, textarea.up { font-family: var(--mono); }
 .muted { color: var(--muted); }
 
-/* header */
 .top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 10px 20px; background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
 .brand { display: flex; align-items: baseline; gap: 10px; }
 .brand strong { font-size: 16px; }
@@ -30,37 +29,35 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tools { margin-left: auto; display: flex; gap: 6px; }
 .banner { background: var(--bad-bg); color: var(--bad); padding: 8px 20px; }
 
-/* buttons */
 .primary, .ghost { border-radius: 6px; padding: 7px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--panel); }
 .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
-.primary:disabled { opacity: .45; cursor: not-allowed; }
+.primary:disabled { cursor: not-allowed; background: var(--line); border-color: var(--line); color: var(--muted); }
 .ghost:hover { border-color: var(--muted); }
+.ghost:disabled { opacity: .45; cursor: not-allowed; }
 .small { padding: 3px 9px; font-size: 12px; }
 .danger { color: var(--bad); }
 .danger[data-armed] { background: var(--bad); color: #fff; border-color: var(--bad); }
 
 main { padding: 16px 20px 40px; max-width: 1280px; margin: 0 auto; }
 
-/* flight layout */
 .flight { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start; }
-@media (max-width: 960px) { .flight { grid-template-columns: 1fr; } }
 .pick { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; margin-bottom: 12px; }
 .pick label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); }
 .pick select { min-width: 180px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); }
 .pick-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
 
-/* sections */
 .sec { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px 12px; margin: 0 0 10px; min-width: 0; }
 fieldset.sec > legend { float: left; width: 100%; padding: 0; margin-bottom: 6px; }
 fieldset.sec > legend + * { clear: both; }
+.sec > summary, .sec > legend { min-width: 0; }
 .sec > summary { cursor: pointer; list-style: none; display: flex; gap: 10px; align-items: baseline; }
 .sec > summary::-webkit-details-marker { display: none; }
 .sec > summary::before { content: "▸"; color: var(--muted); width: 10px; }
 .sec[open] > summary::before { content: "▾"; }
 .sec[open] > summary { margin-bottom: 8px; }
 .sec-title { font-weight: 600; display: inline-flex; gap: 8px; align-items: baseline; }
-.item { font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
-.sec-sum { font-family: var(--mono); font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item { font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; white-space: nowrap; flex-shrink: 0; }
+.sec-sum { font-family: var(--mono); font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1 1 auto; }
 .sec[open] > summary .sec-sum { display: none; }
 .sec.nested { grid-column: 1 / -1; border-style: dashed; padding: 8px 12px; margin: 4px 0 0; }
 
@@ -78,6 +75,8 @@ fieldset.sec > legend + * { clear: both; }
 .err { color: var(--bad); font-size: 11.5px; }
 .err:empty, .hint:empty { display: none; }
 .hint { color: var(--muted); font-size: 11.5px; }
+.field:not(.wide):not(.equip):not(.picking) .err,
+.field:not(.wide):not(.equip):not(.picking) .hint { max-width: max(calc(var(--w, 12ch) + 18px), 18ch); }
 
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
 .seg button { border: 0; background: var(--panel); padding: 6px 10px; font-family: var(--mono); cursor: pointer; border-right: 1px solid var(--line); }
@@ -91,7 +90,6 @@ fieldset.sec > legend + * { clear: both; }
 .eq-letters { display: inline-flex; flex-wrap: wrap; gap: 6px 14px; }
 .eq-letters input:disabled + span { opacity: .45; }
 
-/* preview */
 .preview-col { position: sticky; top: 70px; display: flex; flex-direction: column; gap: 10px; }
 .preview, .aro { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
 .preview-head { display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: 6px; }
@@ -110,7 +108,6 @@ fieldset.sec > legend + * { clear: both; }
 .copy { border: 0; background: none; padding: 0; color: var(--accent); cursor: copy; font-family: var(--mono); font-size: 12px; text-align: left; word-break: break-all; }
 .copy:hover { text-decoration: underline; }
 
-/* lists */
 .list-head { margin-bottom: 12px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: flex; justify-content: space-between; gap: 10px; align-items: start; }
@@ -121,7 +118,6 @@ fieldset.sec > legend + * { clear: both; }
 .empty { color: var(--muted); }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); }
 
-/* dialogs */
 dialog { border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); padding: 16px; width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 32px); }
 dialog::backdrop { background: rgba(10, 15, 25, .45); }
 dialog h3 { margin: 0 0 12px; }
@@ -132,27 +128,17 @@ canvas.sig { width: 100%; max-width: 600px; aspect-ratio: 3 / 1; background: #ff
 .foot { text-align: center; color: var(--muted); font-size: 11.5px; padding: 0 20px 24px; }
 .foot span { display: block; }
 
-/* item 10 picker */
 .pick-box { display: flex; flex-direction: column; gap: 6px; }
 .pick-wrap { display: inline-flex; gap: 4px; }
 .pick-btn { padding: 4px 9px; }
 .field.picking { flex: 1 1 100%; }
-.picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 2px 12px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); max-height: 300px; overflow: auto; }
-.pick-item { display: flex; gap: 6px; align-items: center; font-size: 12px; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
+.field.picking .hint { display: none; }
+.picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 2px 12px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); max-height: 230px; overflow: auto; }
+.pick-item { display: flex; gap: 6px; align-items: center; font-size: 11.5px; padding: 2px 4px; border-radius: 4px; cursor: pointer; }
 .pick-item:hover { background: var(--panel); }
 .pick-item b { font-family: var(--mono); min-width: 2.2ch; }
 .pick-item:has(input:checked) { background: var(--panel); outline: 1px solid var(--accent); }
 
-/* QA fixes: disabled ghost, phone overflow, picker density, mobile action bar */
-.ghost:disabled { opacity: .45; cursor: not-allowed; }
-.primary:disabled { opacity: 1; background: var(--line); border-color: var(--line); color: var(--muted); }
-.sec > summary, .sec > legend { min-width: 0; }
-.sec-sum { min-width: 0; flex: 1 1 auto; }
-.field:not(.wide):not(.equip):not(.picking) .err,
-.field:not(.wide):not(.equip):not(.picking) .hint { max-width: max(calc(var(--w, 12ch) + 18px), 18ch); }
-.field.picking .hint { display: none; }
-.picker { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); max-height: 230px; }
-.pick-item { padding: 2px 4px; font-size: 11.5px; }
 .mobile-bar { display: none; }
 @media (max-width: 960px) {
   .flight { grid-template-columns: minmax(0, 1fr); }
@@ -168,4 +154,3 @@ canvas.sig { width: 100%; max-width: 600px; aspect-ratio: 3 / 1; background: #ff
   .pick-actions button { padding: 4px 9px; font-size: 12px; }
   .tools button { padding: 4px 9px; font-size: 12px; }
 }
-.item { white-space: nowrap; flex-shrink: 0; }

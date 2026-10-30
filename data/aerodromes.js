@@ -1,5 +1,4 @@
 // Argentine aerodromes/heliports — ANAC MADHEL API + AIC A 18/2024, A 29/2026, A 36/2026 (2026-10-30).
-// i=ICAO, l=national 3-letter, n=name, c=city, p=province, x=closed. Autocomplete only (D-010).
 window.PDV_AERODROMES = [
 {"i":null,"l":"MAY","n":"25 de Mayo","c":"25 de Mayo","p":"Buenos Aires"},
 {"i":null,"l":"ELC","n":"25 de Mayo / Estancia la Criolla","c":"25 de Mayo","p":"Buenos Aires"},

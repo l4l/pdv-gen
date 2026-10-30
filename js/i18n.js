@@ -1,4 +1,3 @@
-// UI strings, Spanish (default) and English (D-005). PDF labels are always bilingual and live in pdf.js.
 window.PDV_I18N = {
   es: {
     'app.sub': 'Plan de vuelo OACI · AIP SUP A 94/2024',
@@ -15,7 +14,7 @@ window.PDV_I18N = {
     'f.wake': 'Estela', 'f.eq10a': 'Equipo COM/NAV', 'f.eq10b': 'Vigilancia', 'f.dep': 'Aeródromo de salida', 'f.depName': 'DEP/ nombre y lugar',
     'f.date': 'Fecha de vuelo (DOF)', 'f.eobt': 'Hora EOBT (UTC)', 'f.speed': 'Velocidad', 'f.level': 'Nivel', 'f.route': 'Ruta',
     'f.dest': 'Destino', 'f.destName': 'DEST/ nombre y lugar', 'f.eet': 'EET total', 'f.altn1': 'Alternativa', 'f.altn2': '2ª alternativa',
-    'f.altnName': 'ALTN/ nombre y lugar', 'f.opr': 'OPR/ Explotador', 'f.rmk': 'RMK/ Observaciones', 'f.reg': 'REG/ Matrícula',
+    'f.altnName': 'ALTN/ nombre y lugar', 'f.opr': 'OPR/ Explotador', 'f.rmk': 'RMK/ Observaciones',
     'f.endurance': 'Autonomía', 'f.pob': 'Personas a bordo', 'f.radio': 'Radio de emergencia', 'f.survival': 'Supervivencia',
     'f.jackets': 'Chalecos', 'f.dinghies': 'Botes', 'f.dNumber': 'Cantidad', 'f.dCapacity': 'Capacidad', 'f.dCover': 'Cubierta',
     'f.dColour': 'Color de los botes', 'f.colour': 'Color y marcas', 'f.remarks': 'N/ Otro equipo de supervivencia', 'f.pic': 'Piloto al mando',
@@ -24,7 +23,7 @@ window.PDV_I18N = {
     'eq.U': 'UHF', 'eq.V': 'VHF', 'eq.E': 'ELT', 'eq.P': 'Polar', 'eq.D': 'Desierto', 'eq.M': 'Marítimo', 'eq.J': 'Selva',
     'eq.L': 'Luz', 'eq.F': 'Fluoresceína',
     'h.item7': 'Matrícula sin guión, ej. LVABC', 'h.eq10a': 'ej. SDFGY', 'h.eq10b': 'ej. C, S, EB1', 'h.speed': 'N0095 nudos · K0180 km/h',
-    'h.level': 'A045 · F085 · VFR', 'h.eet': 'HHMM', 'h.endurance': 'HHMM', 'h.pob': 'o TBN', 'h.route': 'ej. DCT', 'h.local': 'hora local',
+    'h.level': 'A045 · F085 · VFR', 'h.pob': 'o TBN', 'h.route': 'ej. DCT', 'h.local': 'hora local',
     'h.typ': 'Requerido si el tipo es ZZZZ', 'h.signature': 'Dibujá con el mouse o el dedo',
     'p.title': 'Vista previa del mensaje FPL', 'p.item19': 'Casilla 19 (no se transmite)', 'p.ok': 'Listo para generar',
     'p.errors': 'errores a corregir', 'p.error1': 'error a corregir', 'p.start': 'Elegí una aeronave para comenzar',
@@ -54,7 +53,7 @@ window.PDV_I18N = {
     'f.wake': 'Wake', 'f.eq10a': 'COM/NAV equipment', 'f.eq10b': 'Surveillance', 'f.dep': 'Departure aerodrome', 'f.depName': 'DEP/ name and place',
     'f.date': 'Date of flight (DOF)', 'f.eobt': 'EOBT (UTC)', 'f.speed': 'Speed', 'f.level': 'Level', 'f.route': 'Route',
     'f.dest': 'Destination', 'f.destName': 'DEST/ name and place', 'f.eet': 'Total EET', 'f.altn1': 'Alternate', 'f.altn2': '2nd alternate',
-    'f.altnName': 'ALTN/ name and place', 'f.opr': 'OPR/ Operator', 'f.rmk': 'RMK/ Remarks', 'f.reg': 'REG/ Registration',
+    'f.altnName': 'ALTN/ name and place', 'f.opr': 'OPR/ Operator', 'f.rmk': 'RMK/ Remarks',
     'f.endurance': 'Endurance', 'f.pob': 'Persons on board', 'f.radio': 'Emergency radio', 'f.survival': 'Survival',
     'f.jackets': 'Jackets', 'f.dinghies': 'Dinghies', 'f.dNumber': 'Number', 'f.dCapacity': 'Capacity', 'f.dCover': 'Cover',
     'f.dColour': 'Dinghy colour', 'f.colour': 'Colour and markings', 'f.remarks': 'N/ Other survival equipment', 'f.pic': 'Pilot in command',
@@ -63,7 +62,7 @@ window.PDV_I18N = {
     'eq.U': 'UHF', 'eq.V': 'VHF', 'eq.E': 'ELT', 'eq.P': 'Polar', 'eq.D': 'Desert', 'eq.M': 'Maritime', 'eq.J': 'Jungle',
     'eq.L': 'Light', 'eq.F': 'Fluorescein',
     'h.item7': 'Registration without hyphen, e.g. LVABC', 'h.eq10a': 'e.g. SDFGY', 'h.eq10b': 'e.g. C, S, EB1', 'h.speed': 'N0095 knots · K0180 km/h',
-    'h.level': 'A045 · F085 · VFR', 'h.eet': 'HHMM', 'h.endurance': 'HHMM', 'h.pob': 'or TBN', 'h.route': 'e.g. DCT', 'h.local': 'local time',
+    'h.level': 'A045 · F085 · VFR', 'h.pob': 'or TBN', 'h.route': 'e.g. DCT', 'h.local': 'local time',
     'h.typ': 'Required when type is ZZZZ', 'h.signature': 'Draw with mouse or finger',
     'p.title': 'FPL message preview', 'p.item19': 'Item 19 (not transmitted)', 'p.ok': 'Ready to generate',
     'p.errors': 'errors to fix', 'p.error1': 'error to fix', 'p.start': 'Choose an aircraft to start',
@@ -80,7 +79,6 @@ window.PDV_I18N = {
   },
 };
 
-// Item 10 code descriptions [es, en] for the equipment picker (SUP A 94/2024, Casilla 10).
 window.PDV_EQ = {
   a: {
     N: ['Sin equipo / inoperativo', 'None / unserviceable'], S: ['Estándar: VHF + VOR + ILS', 'Standard: VHF + VOR + ILS'],

@@ -1,4 +1,3 @@
-// Persistence in localStorage (D-002) plus JSON import/export. No backend (D-001).
 (function () {
   'use strict';
   const KEY = 'pdvgen.v1';
@@ -32,7 +31,6 @@
     }, null, 2);
   }
 
-  // Parse and sanity-check an export file. Throws on anything that isn't ours.
   function parseImport(text) {
     const d = JSON.parse(text);
     if (!d || d.format !== FORMAT || typeof d.version !== 'number') throw new Error('format');
@@ -40,7 +38,6 @@
     return { planes: list(d.planes), pilots: list(d.pilots), drafts: list(d.drafts) };
   }
 
-  // Merge replaces items with the same id and appends the rest; replace swaps the lists.
   function applyImport(db, data, mode) {
     for (const k of ['planes', 'pilots', 'drafts']) {
       if (mode === 'replace') { db[k] = data[k]; continue; }
