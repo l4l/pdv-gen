@@ -94,3 +94,15 @@ Rules come from SUP A 94/2024 and PROGEN-ARO (Res. ANAC 35/2025):
 - If DOF is not today, DOF/ is included automatically.
 - Uppercase is applied automatically.
 Source: research.
+
+## D-018 — 2026-10-30 — DOF/ always included
+DOF/ is always derived from the flight date, which defaults to today in UTC. PROGEN-ARO requires it for plans filed in advance, and it is harmless otherwise. This supersedes the "only when not today" note in D-017. Source: research.
+
+## D-019 — 2026-10-30 — Transmitted text is normalised
+Items 7–18 are uppercased, accents are stripped (Á→A, Ñ→N), and runs of spaces are collapsed. Free-text Item 18 values reject `- ( ) /`, which are FPL message delimiters. Item 19 text is also uppercased. Source: Doc 4444 message format.
+
+## D-020 — 2026-10-30 — PDF ink and spacing deviations
+Filled values are drawn in dark blue so they stand out from the printed form. The route, Item 18 and footer strips are slightly taller than the scan, so text and a signature fit legibly on A4. Source: implementation.
+
+## D-021 — 2026-10-30 — Deployment
+`python3 -m http.server 9991 --bind <tailscale IPv4>` serves the repo root as static files. No build is needed. Source: user.
