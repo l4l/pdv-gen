@@ -163,7 +163,9 @@ canvas.sig { width: 100%; max-width: 600px; aspect-ratio: 3 / 1; background: #ff
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: var(--panel); border-top: 1px solid var(--line);
   }
   .mobile-bar .status { flex: 1; margin: 0; }
-  body[data-tab="flight"] main { padding-bottom: 90px; }
+  body[data-tab="flight"] { padding-bottom: 80px; }
+  .preview .status, .preview .pdf-actions { display: none; }
   .pick-actions button { padding: 4px 9px; font-size: 12px; }
   .tools button { padding: 4px 9px; font-size: 12px; }
 }
+.item { white-space: nowrap; flex-shrink: 0; }
