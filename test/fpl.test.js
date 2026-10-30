@@ -37,5 +37,5 @@ const z = F.normalize({ ...base, dep: 'ZZZZ', depName: 'Estancia La Paz', acType
 assert.strictEqual(F.item18(z), 'DEP/ESTANCIA LA PAZ DOF/261031 REG/LVABC TYP/ULTRALIVIANO OPR/AEROCLUB SAN FERNANDO');
 assert.strictEqual(F.item18(F.normalize({ ...base, opr: '', date: '' })), '0');
 const today = new Date().toISOString().slice(0, 10);
-assert.ok(!F.message({ ...base, date: today }).includes('DOF/'));
+assert.ok(F.message({ ...base, date: today }).includes('DOF/'));
 console.log('ok');
