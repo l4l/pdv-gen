@@ -48,3 +48,12 @@ Errors are shown inline, and the PDF button stays disabled until all errors are 
 
 ## D-010 — 2026-10-30 — Bundled aerodrome list, suggestive only
 The list holds ICAO codes and national 3-letter codes (e.g. FDO ↔ SADF San Fernando), with codes taken from the ANAC AIC. It is used only for autocomplete and hints, and any value is accepted. Local 3-letter codes are legitimate in Items 13 and 16 and in RALT/TALT (SUP A 94/2024 §Casilla 13/16), so they are not rewritten to ZZZZ. ZZZZ plus DEP/DEST/ALTN is still supported for places that have no code. Source: user + SUP.
+
+## D-011 — 2026-10-30 — UX: friendly by default, uncluttered for pros
+- Main flow is plane → pilot → flight → PDF, using the form's box numbers (7, 8, 9…) as anchors that pros already know.
+- Plane and pilot profiles prefill the form, so a routine flight only needs aerodromes, times, route, EET and POB.
+- Advanced fields (Item 18 extras, Item 19 survival/dinghies, ZZZZ details) sit in collapsible sections. They expand automatically when filled or when they have an error.
+- Short inline hints and examples are shown, with fuller help on demand (ⓘ) and not always visible.
+- A live preview of the ICAO FPL text sits beside the form for pros to check at a glance.
+- Codes are uppercased automatically, with keyboard-first input.
+Source: user.
