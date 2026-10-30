@@ -252,9 +252,9 @@
   function drawHeader(doc, y) {
     band(doc, y, H.header, false);
     doc.setTextColor(0);
-    font(doc, 'helvetica', 'normal', 9);
-    text(doc, 'FLIGHT PLAN', FORM_W / 2, y + 3, { align: 'center' });
     font(doc, 'helvetica', 'bold', 9);
+    text(doc, 'FLIGHT PLAN', FORM_W / 2, y + 3, { align: 'center' });
+    font(doc, 'helvetica', 'normal', 9);
     text(doc, 'PLAN DE VUELO', FORM_W / 2, y + 6.3, { align: 'center' });
   }
 
@@ -264,13 +264,13 @@
     const end = eol(doc, 2.2, y + 11, '', 'FF');
     arrow(doc, end + 2.5, end + 9, y + 9.9);
 
-    label(doc, 44.6, y + 2.2, 'ADRESSE(S)', 'Destinatarios', { size: 5.8, esIndent: 0.4 });
+    label(doc, 44.6, y + 2.2, 'ADDRESSEE(S)', 'Destinatarios', { size: 5.8, esIndent: 0.4 });
     box(doc, 44.3, y + 5.4, 137.1, 3.4);
     box(doc, 44.3, y + 8.8, 137.1, 3.4);
     box(doc, 44.3, y + 12.2, 91.3, 4.0);
     eol(doc, 143.4, y + 15.4);
 
-    label(doc, 5.6, y + 18.6, 'FILING TIME', 'Hora de deposito', { size: 5.8, esIndent: 0.4 });
+    label(doc, 5.6, y + 18.6, 'FILING TIME', 'Hora de depósito', { size: 5.8, esIndent: 0.4 });
     charBox(doc, 5.6, y + 22.6, 6, 5.85, 4.5, '', { full: [2] });
     arrow(doc, 44.3, 51.3, y + 24.8);
     label(doc, 67.6, y + 18.6, 'ORIGINATOR', 'Remitente', { size: 5.8 });
@@ -288,12 +288,12 @@
     let r = y + 5.6, b = y + 10.6;
     label(doc, 3.3, r, 'MESSAGE TYPE', 'Tipo de mensaje', Object.assign({ num: '3' }, L));
     eol(doc, 2.2, y + 14.2, '', ' (FPL');
-    label(doc, 44.1, r, 'AIRCRAFT IDENTIFICATION', 'Identificación aeronave', Object.assign({ num: '7', esIndent: 1.2 }, L));
+    label(doc, 44.1, r, 'AIRCRAFT IDENTIFICATION', 'Identificación de la aeronave', Object.assign({ num: '7', esIndent: 1.2 }, L));
     charBox(doc, 44.1, b, 7, 5, 5, f.item7);
     label(doc, 96.5, r, 'FLIGHT RULES', 'Reglas de vuelo', Object.assign({ num: '8' }, L));
     dash(doc, 96.5, b + 3.2);
     charBox(doc, 104, b, 1, 7, 5, f.rules);
-    label(doc, 145.6, r, 'TYPE OF FLIGHT', 'Tipo  de vuelo', Object.assign({ esIndent: 0.4 }, L));
+    label(doc, 145.6, r, 'TYPE OF FLIGHT', 'Tipo de vuelo', Object.assign({ esIndent: 0.4 }, L));
     charBox(doc, 153, b, 1, 7, 5, f.flightType);
     eol(doc, 162.4, b + 4);
 
@@ -303,7 +303,7 @@
     charBox(doc, 12.5, b, 2, 7, 5, f.number);
     label(doc, 36.8, r, 'TYPE OF AIRCRAFT', 'Tipo de aeronave', L);
     charBox(doc, 40.5, b, 4, 5.25, 5, f.acType);
-    label(doc, 81.5, r, 'WAKE TURBULENCE CAT.', 'Cat. De estela turbulenta', L);
+    label(doc, 81.5, r, 'WAKE TURBULENCE CAT.', 'Cat. de estela turbulenta', L);
     doc.setDrawColor(0); doc.setLineWidth(0.35);
     doc.line(fx(93.2), b + 6.2, fx(96.2), b - 0.6);
     charBox(doc, 97, b + 0.8, 1, 7, 4.2, f.wake);
@@ -365,15 +365,15 @@
 
     label(doc, 68.4, r, 'TOTAL EET', 'EET Total', L);
     font(doc, 'times', 'normal', 5.4);
-    text(doc, 'HR   MIN', 68.4, r + 4.1);
+    text(doc, 'HR. MIN', 68.4, r + 4.1);
     charBox(doc, 65.3, b + 1.0, 4, 4.2, 5, f.eet, { ticks: [2] });
 
     arrow(doc, 93.2, 103.8, b + 2.6);
-    label(doc, 106.8, r, 'ALTN AERODROME', 'Aerodromo alt.', L);
+    label(doc, 106.8, r, 'ALTN AERODROME', 'Aeródromo alt.', L);
     charBox(doc, 106, b, 4, 5.3, 5, f.altn1);
 
     arrow(doc, 132, 142.3, b + 2.6);
-    label(doc, 144.7, r, '2ND ALTN AERODROME', '2º aerodromo alt.', Object.assign({ esIndent: 0.6 }, L));
+    label(doc, 144.7, r, '2ND ALTN AERODROME', '2° aeródromo alt.', Object.assign({ esIndent: 0.6 }, L));
     charBox(doc, 145.9, b, 4, 5.3, 5, f.altn2);
     eol(doc, 173, b + 4.2);
   }
@@ -415,8 +415,10 @@
     doc.setTextColor(0);
     font(doc, 'helvetica', 'normal', 8.4);
     text(doc, 'SUPPLEMENTARY INFORMATION (NOT TO BE TRANSMITTED IN FPL MESSAGES)', FORM_W / 2, y + 3.1, { align: 'center' });
+    const es = 'Información suplementaria (EN LOS MENSAJES FPL NO HAY QUE TRANSMITIR ESTOS DATOS)';
     font(doc, 'helvetica', 'normal', 7.8);
-    text(doc, 'Información suplementaria (En los mensajes FPL no hay que transmitir estos datos)', FORM_W / 2, y + 6.1, { align: 'center' });
+    fitSize(doc, es, FORM_W - 6, 7.8);
+    text(doc, es, FORM_W / 2, y + 6.1, { align: 'center' });
   }
 
   function drawItem19(doc, y, f) {
@@ -428,7 +430,7 @@
     text(doc, '19', 9.2, y + 2.4);
     label(doc, 16.2, y + 2.4, 'ENDURANCE', '', { size: 7.4 });
     font(doc, 'helvetica', 'normal', 7.4);
-    text(doc, 'Autonomia', 15.6, y + 5);
+    text(doc, 'Autonomía', 15.6, y + 5);
     font(doc, 'helvetica', 'normal', S);
     text(doc, 'HR/MIN', 30.1, y + 7.4, { align: 'center' });
     dash(doc, 4.6, y + 10.6, 1.8);
@@ -441,7 +443,7 @@
     charBox(doc, 65.3, y + 7.9, 3, 7.07, 3.8, f.pob);
 
     arrow(doc, 111, 121.1, y + 9.9);
-    label(doc, 145.1, y + 2.1, 'EMERGENCY RADIO', 'Equipo de emergencia', { size: 7.4, lead: 2.4 });
+    label(doc, 145.1, y + 2.1, 'EMERGENCY RADIO', 'Equipo radio de emergencia', { size: 7.4, lead: 2.4 });
     bigLetter(doc, 'R/', 132.3, y + 12.6);
     const radio = f.radio || {};
     [['U', 'UHF', 142.5], ['V', 'VHF', 152.9], ['E', 'ELT', 166.8]].forEach(([k, lab, x]) => {
@@ -450,7 +452,7 @@
     });
 
     label(doc, 16.9, y + 15.4, 'SURVIVAL EQUIPMENT/Equipo de supervivencia', '', { size: 7.4 });
-    label(doc, 102.9, y + 15.4, 'JACKETS/ Chalecos', '', { size: 7.4 });
+    label(doc, 102.9, y + 15.4, 'JACKETS/Chalecos', '', { size: 7.4 });
     const ry = y + 21;
     arrow(doc, 9.2, 19.5, ry + 2.6);
     const sv = f.survival || {};
@@ -464,7 +466,7 @@
     arrow(doc, 94.9, 102, ry + 2.6);
     const jk = f.jackets || {};
     letterBox(doc, 104.1, ry, 'J', !jk.any);
-    [['L', 'LIGHT', 'Luz', 118], ['F', 'FLUORES', 'Fluor', 132.8],
+    [['L', 'LIGHT', 'Luz', 118], ['F', 'FLUORES', 'Fluor.', 132.8],
       ['U', '', 'UHF', 147.9], ['V', '', 'VHF', 162.2]].forEach(([k, en, es, x]) => {
       labelCentered(doc, x + LETTER.w / 2, y + 17.7, en, es, S);
       letterBox(doc, x, ry, k, !jk.any || !jk[k]);
@@ -474,7 +476,7 @@
     label(doc, 24, y + 27.9, 'DINGHIES/Botes neumáticos', '', { size: 8 });
     const dg = f.dinghies || {};
     const dy = y + 33;
-    labelCentered(doc, 31.9, y + 30.2, 'NUMBER', 'Numero', S);
+    labelCentered(doc, 31.9, y + 30.2, 'NUMBER', 'Número', S);
     labelCentered(doc, 65.3, y + 30.2, 'CAPACITY', 'Capacidad', S);
     labelCentered(doc, 95.5, y + 29.3, 'COVER', 'Cubierta', S);
     labelCentered(doc, 128, y + 30.2, 'COLOUR', 'Color', S);
@@ -500,14 +502,14 @@
     textBox(doc, 23.1, y + 52.4, 144.1, 4.2, f.remarks);
     eol(doc, 170.2, y + 56.1);
 
-    label(doc, 24.2, y + 59.2, 'PILOT IN-COMMAND', 'Comandante de la aeronave', { size: S });
+    label(doc, 24.2, y + 59.2, 'PILOT-IN-COMMAND', 'Piloto al mando', { size: S });
     bigLetter(doc, 'C', 10.4, y + 65.6);
     textBox(doc, 23.1, y + 61.9, 102.1, 4.2, f.pic);
     eol(doc, 127.8, y + 65.6, ') ');
 
     font(doc, 'helvetica', 'normal', 7.2);
     doc.setTextColor(0);
-    text(doc, 'FILED BY/   Presentado por', 23.3, y + 68.7);
+    text(doc, 'FILED BY / Presentado por', 23.3, y + 68.7);
   }
 
   function drawFooter(doc, y, f) {
@@ -519,12 +521,10 @@
 
     fillText(doc, 2, y + (h - 6) / 2, split - 4, 6, f.filedBy);
 
-    label(doc, 74.2, y + 2.5, 'SPACE RESERVED FOR ADDOTIONAL REQUIREMENTS',
+    label(doc, 74.2, y + 2.5, 'SPACE RESERVED FOR ADDITIONAL REQUIREMENTS',
       'Espacio reservado para requisitos adicionales', { size: 5.8 });
-    font(doc, 'helvetica', 'normal', 5.8);
-    text(doc, 'PILOT IN COMMAND SIGNATURE/ Firma del Comandante de la aeronave', FORM_W - 1.5, y + h - 1.2, { align: 'right' });
 
-    if (f.signature) drawSignature(doc, f.signature, split + 3, y + 5.4, FORM_W - split - 6, h - 9.6);
+    if (f.signature) drawSignature(doc, f.signature, split + 3, y + 5.6, FORM_W - split - 6, h - 7.1);
   }
 
   function drawSignature(doc, dataUrl, x, y, w, h) {
