@@ -14,7 +14,7 @@
 
   // ---------------------------------------------------------------- geometry
   const FORM_X = 10;          // left edge of the form
-  const FORM_Y = 8;           // top edge of the form
+  const FORM_Y = 7.6;           // top edge of the form
   const FORM_W = 190;         // form width
   const EOL_CELL_X = 167.2;   // start of the grey "<<≡" cell on full-width lines
 
@@ -29,7 +29,7 @@
     item18Lines: [5.5, 6, 6, 6.5],
     gap: 3.3,
     supp: 7,
-    item19: 72,
+    item19: 72.5,
     footer: 18,
   };
   const ITEM18_LEFT_CELL = 9.2; // width of the left cell holding the "—"
@@ -43,7 +43,8 @@
   const FILL_STYLE = 'bold';
   const FILL_SIZE = 11;             // pt, for character boxes
   const FREE_SIZE = 10;             // pt, max size for free-text fields
-  const MIN_SIZE = 5.5;             // pt, never shrink below this
+  const MIN_SIZE = 5.5;
+  const TICK = 0.22;                // tick height as a fraction of box height             // pt, never shrink below this
   const PT = 25.4 / 72;             // mm per point
 
   // ------------------------------------------------------------ primitives
@@ -169,13 +170,13 @@
     for (let i = 1; i < n; i++) {
       const bx = fx(x + i * cellW);
       if (o.full && o.full.indexOf(i) >= 0) doc.line(bx, y, bx, y + h);
-      else if (!o.ticks || o.ticks.indexOf(i) >= 0) doc.line(bx, y + h, bx, y + h - h * 0.3);
+      else if (!o.ticks || o.ticks.indexOf(i) >= 0) doc.line(bx, y + h, bx, y + h * (1 - TICK));
     }
     if (!value) return;
     setInk(doc, FILL_INK);
     font(doc, FILL_FONT, FILL_STYLE, Math.min(FILL_SIZE, (h / PT) * 0.95));
     const chars = String(value).split('').slice(0, n);
-    const base = y + h / 2 + doc.getFontSize() * PT * 0.3;
+    const base = y + h * (1 - TICK) - 0.15; // digits sit just above the ticks
     chars.forEach((c, i) => text(doc, c, x + (i + 0.5) * cellW, base, { align: 'center' }));
     setInk(doc, INK);
   }
@@ -423,8 +424,8 @@
 
     label(doc, 68.4, r, 'TOTAL EET', 'EET Total', L);
     font(doc, 'times', 'normal', 5.4);
-    text(doc, 'HR   MIN', 68.4, r + 4.3);
-    charBox(doc, 65.3, b + 0.6, 4, 3.55, 5, f.eet, { ticks: [2] });
+    text(doc, 'HR   MIN', 68.4, r + 4.1);
+    charBox(doc, 65.3, b + 1.0, 4, 4.2, 5, f.eet, { ticks: [2] });
 
     arrow(doc, 93.2, 103.8, b + 2.6);
     label(doc, 106.8, r, 'ALTN AERODROME', 'Aerodromo alt.', L);
@@ -502,12 +503,12 @@
     charBox(doc, 65.3, y + 7.9, 3, 7.07, 3.8, f.pob);
 
     arrow(doc, 111, 121.1, y + 9.9);
-    label(doc, 145.1, y + 2.4, 'EMERGENCY RADIO', 'Equipo de emergencia', { size: 7.4, lead: 2.6 });
+    label(doc, 145.1, y + 2.1, 'EMERGENCY RADIO', 'Equipo de emergencia', { size: 7.4, lead: 2.4 });
     bigLetter(doc, 'R/', 132.3, y + 12.6);
     const radio = f.radio || {};
     [['U', 'UHF', 142.5], ['V', 'VHF', 152.9], ['E', 'ELT', 166.8]].forEach(([k, lab, x]) => {
-      labelCentered(doc, x + LETTER.w / 2, y + 7.3, lab, '', S + 0.6);
-      letterBox(doc, x, y + 7.9, k, !radio[k]);
+      labelCentered(doc, x + LETTER.w / 2, y + 7.0, lab, '', S + 0.2);
+      letterBox(doc, x, y + 8.3, k, !radio[k]);
     });
 
     // --- Survival equipment / jackets
@@ -539,7 +540,7 @@
     const dy = y + 33;
     labelCentered(doc, 31.9, y + 30.2, 'NUMBER', 'Numero', S);
     labelCentered(doc, 65.3, y + 30.2, 'CAPACITY', 'Capacidad', S);
-    labelCentered(doc, 95.5, y + 30.2, 'COVER', 'Cubierta', S);
+    labelCentered(doc, 95.5, y + 29.3, 'COVER', 'Cubierta', S);
     labelCentered(doc, 128, y + 30.2, 'COLOUR', 'Color', S);
     arrow(doc, 2.2, 9.6, dy + 2.6);
     letterBox(doc, 10.6, dy, 'D', !dg.any);
@@ -556,20 +557,20 @@
     // --- A/ colour and markings
     label(doc, 24.8, y + 40.3, 'AIRCRAFT COLOUR AND MARKINGS', 'Color y marcas de la aeronave', { size: S });
     bigLetter(doc, 'A /', 9.6, y + 47.4);
-    textBox(doc, 23.1, y + 43.4, 158.3, 4.4, f.colour);
+    textBox(doc, 23.1, y + 43.1, 158.3, 4.2, f.colour);
 
     // --- N/ remarks
-    label(doc, 24.2, y + 50, 'REMARKS', 'Observaciones', { size: S });
-    arrow(doc, 2.2, 9.6, y + 55.1);
-    letterBox(doc, 10.6, y + 52.5, 'N', !f.remarks, 5.8);
-    textBox(doc, 23.1, y + 53, 144.1, 4.4, f.remarks);
-    eol(doc, 170.2, y + 56.8, 11);
+    label(doc, 24.2, y + 49.4, 'REMARKS', 'Observaciones', { size: S });
+    arrow(doc, 2.2, 9.6, y + 54.5);
+    letterBox(doc, 10.6, y + 51.9, 'N', !f.remarks, 5.8);
+    textBox(doc, 23.1, y + 52.4, 144.1, 4.2, f.remarks);
+    eol(doc, 170.2, y + 56.1, 11);
 
     // --- C/ pilot in command
-    label(doc, 24.2, y + 59.6, 'PILOT IN-COMMAND', 'Comandante de la aeronave', { size: S });
-    bigLetter(doc, 'C', 10.4, y + 66.4);
-    textBox(doc, 23.1, y + 62.6, 102.1, 4.4, f.pic);
-    eol(doc, 127.8, y + 66.4, 11, ') ');
+    label(doc, 24.2, y + 59.2, 'PILOT IN-COMMAND', 'Comandante de la aeronave', { size: S });
+    bigLetter(doc, 'C', 10.4, y + 65.6);
+    textBox(doc, 23.1, y + 61.9, 102.1, 4.2, f.pic);
+    eol(doc, 127.8, y + 65.6, 11, ') ');
 
     font(doc, 'helvetica', 'normal', 7.2);
     doc.setTextColor(0);
@@ -590,7 +591,7 @@
     font(doc, 'helvetica', 'normal', 5.8);
     text(doc, 'PILOT IN COMMAND SIGNATURE/ Firma del Comandante de la aeronave', FORM_W - 1.5, y + h - 1.2, { align: 'right' });
 
-    if (f.signature) drawSignature(doc, f.signature, split + 3, y + 5.2, FORM_W - split - 6, h - 8);
+    if (f.signature) drawSignature(doc, f.signature, split + 3, y + 5.4, FORM_W - split - 6, h - 9.6); // ends ~2mm above the caption
   }
 
   /** Place an image inside (x, y, w, h), preserving aspect ratio, centred. */
