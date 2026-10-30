@@ -1,4 +1,3 @@
-# Mirror main to gh-pages on every push; GitHub Pages serves gh-pages as static files (D-026).
 name: pages
 on:
   push:
