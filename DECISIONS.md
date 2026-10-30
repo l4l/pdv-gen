@@ -109,3 +109,15 @@ Filled values are drawn in dark blue so they stand out from the printed form. Th
 
 ## D-022 — 2026-10-30 — Item 10 multi-select picker
 Item 10 codes come from a fixed list but combine (SDFGY), so a single-select dropdown cannot express them. Each Item 10 input therefore keeps its text box for pros, plus a ▾ checkbox grid where every code has a short description. The grid enforces two rules: N stands alone, and 10b allows only one transponder mode (A/C/E/H/I/L/P/S/X). It writes codes in canonical order. Source: user.
+
+## D-023 — 2026-10-30 — DOF/ omitted for same-day flights
+This supersedes D-018. The user asked for DOF/ to be removed. PROGEN-ARO still requires DOF/ when a plan is filed ahead for a later date, so DOF/ is now included only when the flight date (UTC) is not today. Source: user + PROGEN-ARO.
+
+## D-024 — 2026-10-30 — No credit line on the PDF; layout frozen
+The "Generado con PDV-Gen…" footer is removed. The blue ink and the current proportions (D-020) are kept as-is per the user, with no change toward a strict replica. Source: user.
+
+## D-025 — 2026-10-30 — PIC always follows the selected pilot
+If a pilot is selected and the PIC field is empty (for example after an import or an old saved flight), the PIC and "Presentado por" fields are filled in from the pilot. When there is exactly one pilot, they are selected automatically. Source: user report "pic not filled".
+
+## D-026 — 2026-10-30 — Hosting on GitHub Pages
+The site is pushed to github.com/l4l/pdv-gen and served by GitHub Pages from `main` (repo root, static files with no build). The Tailscale host stays available for local use. Source: user.

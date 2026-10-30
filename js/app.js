@@ -366,6 +366,8 @@
   }
 
   function renderFlight() {
+    const pilot = pilotOf();
+    if (pilot && !F.norm(cur.pic)) { cur.pic = pilot.name; cur._lastPic = pilot.name; if (!F.norm(cur.filedBy)) cur.filedBy = pilot.name; }
     renderSelects();
     flightForm = buildForm($('#flight-form'), FLIGHT_SECTIONS, cur, onFlightChange);
     refreshFlight();
@@ -411,7 +413,7 @@
     if (!dep) { box.replaceChildren(); return; }
     const o = ARO.find((a) => a.icao === dep || a.local === dep);
     const n = F.normalize(cur);
-    const dd = n.dof ? n.dof.slice(4, 6) + '/' + n.dof.slice(2, 4) : '';
+    const dd = cur.date ? cur.date.slice(8, 10) + '/' + cur.date.slice(5, 7) : '';
     const subject = ['FPL', n.item7, (n.dep || '') + '-' + (n.dest || ''), dd, n.eobt ? n.eobt + 'Z' : ''].filter(Boolean).join(' ');
     const name = o && ((adByCode.get(o.icao) || {}).n || o.name);
     box.replaceChildren(
@@ -464,7 +466,7 @@
     if (!window.jspdf || !window.PDV_PDF) { toast(t('msg.pdfLib')); return null; }
     return window.PDV_PDF.render(pdfInput());
   }
-  const pdfName = () => { const n = F.normalize(cur); return `FPL_${n.item7}_${n.dof}_${n.dep}-${n.dest}_${n.eobt}.pdf`; };
+  const pdfName = () => { const n = F.normalize(cur); return `FPL_${n.item7}_${F.dofFromDate(cur.date)}_${n.dep}-${n.dest}_${n.eobt}.pdf`; };
 
   // ---------- drafts ----------
   function saveDraft() {

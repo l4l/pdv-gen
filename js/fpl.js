@@ -58,7 +58,8 @@
     for (const [, k] of ITEM18) if (k !== 'dof') n[k] = norm(f[k]);
     n.reg = normId(f.reg);
     n.route = norm(f.route);
-    n.dof = dofFromDate(f.date);
+    // DOF/ only when the flight is not today (UTC): required for advance filing (PROGEN-ARO), omitted otherwise (D-023).
+    n.dof = f.date && f.date !== new Date().toISOString().slice(0, 10) ? dofFromDate(f.date) : '';
     if (/^\d{1,2}$/.test(n.pob)) n.pob = n.pob.padStart(3, '0');
     return n;
   }

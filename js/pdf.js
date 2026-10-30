@@ -606,13 +606,6 @@
     }
   }
 
-  function drawCredit(doc, y) {
-    font(doc, 'helvetica', 'normal', 6);
-    doc.setTextColor(120);
-    text(doc, 'Generado con PDV-Gen — formato AIP SUP A 94/2024 (ENR 1.10)', FORM_W / 2, y, { align: 'center' });
-    doc.setTextColor(0);
-  }
-
   // ------------------------------------------------------------------ render
 
   function render(fpl) {
@@ -644,8 +637,6 @@
     doc.setDrawColor(0);
     doc.setLineWidth(0.4);
     doc.rect(fx(0), FORM_Y, FORM_W, y - FORM_Y);
-
-    drawCredit(doc, y + 4.5);
     return doc;
   }
 

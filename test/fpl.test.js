@@ -37,4 +37,6 @@ assert.deepStrictEqual(v({ item7: 'ARG1766', flightType: 'S' }), ['reg']);
 const z = F.normalize({ ...base, dep: 'ZZZZ', depName: 'Estancia La Paz', acType: 'ZZZZ', typ: 'ultraliviano', item7: 'ARG12', reg: 'LV-ABC' });
 assert.strictEqual(F.item18(z), 'DEP/ESTANCIA LA PAZ DOF/261031 REG/LVABC TYP/ULTRALIVIANO OPR/AEROCLUB SAN FERNANDO');
 assert.strictEqual(F.item18(F.normalize({ ...base, opr: '', date: '' })), '0');
+const today = new Date().toISOString().slice(0, 10);
+assert.ok(!F.message({ ...base, date: today }).includes('DOF/'));   // same-day: no DOF (D-023)
 console.log('ok');
