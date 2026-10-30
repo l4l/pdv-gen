@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDV-Gen · Plan de Vuelo</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <strong>PDV-Gen</strong>
+    <span data-i18n="app.sub"></span>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="flight" data-i18n="tab.flight"></button>
+    <button role="tab" data-tab="planes" data-i18n="tab.planes"></button>
+    <button role="tab" data-tab="pilots" data-i18n="tab.pilots"></button>
+  </nav>
+  <div class="tools">
+    <button class="ghost" id="btn-export" data-i18n="data.export"></button>
+    <button class="ghost" id="btn-import" data-i18n="data.import"></button>
+    <input type="file" id="file-import" accept="application/json,.json" hidden>
+    <button class="ghost lang" id="btn-lang">EN</button>
+  </div>
+</header>
+
+<div class="banner" id="storage-warn" hidden data-i18n="msg.storage"></div>
+
+<main>
+  <section id="tab-flight" class="tab">
+    <div class="flight">
+      <div class="form-col">
+        <div class="pick">
+          <label><span data-i18n="sel.plane"></span><select id="sel-plane"></select></label>
+          <label><span data-i18n="sel.pilot"></span><select id="sel-pilot"></select></label>
+          <div class="pick-actions">
+            <button class="ghost" id="btn-new" data-i18n="btn.new"></button>
+            <button class="ghost" id="btn-save-draft" data-i18n="btn.saveDraft"></button>
+            <button class="ghost" id="btn-drafts" data-i18n="btn.drafts"></button>
+          </div>
+        </div>
+        <p class="empty" id="no-plane" hidden data-i18n="sel.addPlane"></p>
+        <form id="flight-form" autocomplete="off" novalidate></form>
+      </div>
+      <aside class="preview-col">
+        <div class="preview">
+          <div class="preview-head">
+            <span data-i18n="p.title"></span>
+            <button class="ghost small" id="btn-copy" data-i18n="p.copy"></button>
+          </div>
+          <pre id="fpl-msg"></pre>
+          <div class="preview-sub" data-i18n="p.item19"></div>
+          <pre id="fpl-19"></pre>
+          <div id="status" class="status"></div>
+          <div class="pdf-actions">
+            <button class="primary" id="btn-pdf" data-i18n="btn.pdf"></button>
+            <button class="ghost" id="btn-view" data-i18n="btn.view"></button>
+          </div>
+        </div>
+        <div class="aro" id="aro"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="tab-planes" class="tab" hidden>
+    <div class="list-head"><button class="primary" id="btn-add-plane" data-i18n="btn.add"></button></div>
+    <div id="plane-list" class="cards"></div>
+  </section>
+
+  <section id="tab-pilots" class="tab" hidden>
+    <div class="list-head"><button class="primary" id="btn-add-pilot" data-i18n="btn.add"></button></div>
+    <div id="pilot-list" class="cards"></div>
+  </section>
+</main>
+
+<dialog id="dlg-plane"><form method="dialog" id="plane-form" autocomplete="off" novalidate></form></dialog>
+<dialog id="dlg-pilot"><form method="dialog" id="pilot-form" autocomplete="off" novalidate></form></dialog>
+<dialog id="dlg-drafts"><div id="drafts-body"></div></dialog>
+<dialog id="dlg-import"><div id="import-body"></div></dialog>
+
+<datalist id="dl-ad"></datalist>
+<datalist id="dl-ac"></datalist>
+<div class="toast" id="toast" hidden></div>
+
+<footer class="foot">
+  AIP SUP A 94/2024 (ENR 1.10) · PROGEN-ARO · AIC A 19/2026 · datos ANAC MADHEL 2026-10.
+  <span>Sin servidor: los datos quedan en este navegador. / No server: data stays in this browser.</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="data/aerodromes.js"></script>
+<script src="data/aircraft.js"></script>
+<script src="data/aro.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/fpl.js"></script>
+<script src="js/store.js"></script>
+<script src="js/pdf.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>PDV-Gen — PDF sample</title>
+<style>
+  body { margin: 0; font: 14px system-ui, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+  header { padding: 8px 12px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #ccc; }
+  iframe { flex: 1; border: 0; width: 100%; }
+</style>
+</head>
+<body>
+<header>
+  <button id="vfr">sample VFR</button>
+  <button id="struck">sample all-struck/long route</button>
+</header>
+<iframe id="out" title="PDF preview"></iframe>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../js/pdf.js"></script>
+<script>
+  const VFR = {
+    item7: 'LVABC', rules: 'V', flightType: 'G', number: '', acType: 'C152', wake: 'L',
+    eq10a: 'SDFGY', eq10b: 'C', dep: 'SADF', eobt: '1430',
+    speed: 'N0095', level: 'A045', route: 'DCT SANTA ROSA DCT',
+    dest: 'SAZR', eet: '0230', altn1: 'SAZS', altn2: '',
+    item18: 'DOF/261031 OPR/AEROCLUB XX RMK/VUELO DE INSTRUCCION',
+    endurance: '0430', pob: '002',
+    radio: { U: false, V: true, E: true },
+    survival: { any: true, P: false, D: false, M: false, J: true },
+    jackets: { any: true, L: true, F: false, U: false, V: true },
+    dinghies: { any: true, number: '01', capacity: '004', cover: true, colour: 'NARANJA' },
+    colour: 'BLANCO CON FRANJAS ROJAS', remarks: 'PILOTO EN INSTRUCCION', pic: 'JUAN PEREZ',
+    filedBy: 'JUAN PEREZ', signature: null,
+  };
+
+  const segment = 'DCT ROSARIO UW12 PAMPA/N0100A055 DCT CORONEL SUAREZ DCT 3615S06012W DCT SANTA ROSA DCT VIEDMA DCT TRELEW';
+  const STRUCK = Object.assign({}, VFR, {
+    route: Array(4).fill(segment).join(' '),
+    item18: 'DOF/261031 REG/LVABC EET/SAEF0030 SAVF0110 OPR/AEROCLUB GENERAL RODRIGUEZ PER/A ' +
+      'RMK/VUELO DE TRASLADO CON ESCALAS TECNICAS PARA CARGA DE COMBUSTIBLE Y PERNOCTE EN DESTINO INTERMEDIO '.repeat(3),
+    eq10a: 'SDFGHIJ1J3J5KLORWXYZ', eq10b: 'LB1D1G1',
+    radio: { U: false, V: false, E: false },
+    survival: { any: false, P: false, D: false, M: false, J: false },
+    jackets: { any: false, L: false, F: false, U: false, V: false },
+    dinghies: { any: false, number: '', capacity: '', cover: false, colour: '' },
+    remarks: '',
+    colour: 'BLANCO CON FRANJAS ROJAS Y AZULES, MATRICULA EN NEGRO, PUNTAS DE ALA AMARILLAS',
+  });
+
+  // Small generated signature so the image path gets exercised too.
+  function demoSignature() {
+    const c = document.createElement('canvas');
+    c.width = 400; c.height = 120;
+    const g = c.getContext('2d');
+    g.strokeStyle = '#102080'; g.lineWidth = 4; g.beginPath();
+    for (let x = 20; x <= 380; x += 4) g.lineTo(x, 60 + 35 * Math.sin(x / 18) * Math.cos(x / 50));
+    g.stroke();
+    return c.toDataURL('image/png');
+  }
+
+  function show(fpl) {
+    const doc = window.PDV_PDF.render(fpl);
+    document.getElementById('out').src = doc.output('bloburl');
+  }
+
+  document.getElementById('vfr').onclick = () => show(Object.assign({}, VFR, { signature: demoSignature() }));
+  document.getElementById('struck').onclick = () => show(STRUCK);
+  show(Object.assign({}, VFR, { signature: demoSignature() }));
+</script>
+</body>
+</html>

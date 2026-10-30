@@ -1,7 +1,7 @@
 // ARO/AIS offices — AIC A 19/2026 Anexo ALFA (ANAC). Hint only; verify before filing.
 // Note: the Anexo lists only ICAO indicator, AMHS address, e-mail and phones. "name" and "local"
-// are NOT printed in the AIC: names are filled in from the ICAO indicator, and "local" is the
-// 3-letter suffix of the ac___@eana.com.ar address (matches the national designator).
+// are NOT printed in the AIC; "local" was cross-checked against ANAC MADHEL by ICAO indicator,
+// and the app shows the MADHEL name (data/aerodromes.js) when available.
 window.PDV_ARO_INFO = {
   aic: "A 19/2026",
   date: "2026-06-17",
