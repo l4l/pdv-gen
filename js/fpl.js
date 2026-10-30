@@ -204,7 +204,7 @@
     return e;
   }
 
-  const api = { EQ10A, EQ10B, PBN, STS, ITEM18, norm, normId, normalize, item18, item19, message, validate, dofFromDate };
+  const api = { tokens, EQ10A, EQ10B, PBN, STS, ITEM18, norm, normId, normalize, item18, item19, message, validate, dofFromDate };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PDV_FPL = api;
 })(typeof window !== 'undefined' ? window : globalThis);

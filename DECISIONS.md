@@ -106,3 +106,6 @@ Filled values are drawn in dark blue so they stand out from the printed form. Th
 
 ## D-021 — 2026-10-30 — Deployment
 `python3 -m http.server 9991 --bind <tailscale IPv4>` serves the repo root as static files. No build is needed. Source: user.
+
+## D-022 — 2026-10-30 — Item 10 multi-select picker
+Item 10 codes come from a fixed list but combine (SDFGY), so a single-select dropdown cannot express them. Each Item 10 input therefore keeps its text box for pros, plus a ▾ checkbox grid where every code has a short description. The grid enforces two rules: N stands alone, and 10b allows only one transponder mode (A/C/E/H/I/L/P/S/X). It writes codes in canonical order. Source: user.

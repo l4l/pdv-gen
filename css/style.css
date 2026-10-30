@@ -131,3 +131,14 @@ canvas.sig { width: 100%; max-width: 600px; aspect-ratio: 3 / 1; background: #ff
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 6px; z-index: 20; }
 .foot { text-align: center; color: var(--muted); font-size: 11.5px; padding: 0 20px 24px; }
 .foot span { display: block; }
+
+/* item 10 picker */
+.pick-box { display: flex; flex-direction: column; gap: 6px; }
+.pick-wrap { display: inline-flex; gap: 4px; }
+.pick-btn { padding: 4px 9px; }
+.field.picking { flex: 1 1 100%; }
+.picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 2px 12px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); max-height: 300px; overflow: auto; }
+.pick-item { display: flex; gap: 6px; align-items: center; font-size: 12px; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
+.pick-item:hover { background: var(--panel); }
+.pick-item b { font-family: var(--mono); min-width: 2.2ch; }
+.pick-item:has(input:checked) { background: var(--panel); outline: 1px solid var(--accent); }

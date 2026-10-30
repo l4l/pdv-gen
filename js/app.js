@@ -104,8 +104,8 @@
     fld('number', { w: 3 }),
     fld('acType', { w: 6, list: 'dl-ac' }),
     fld('wake', { type: 'seg', opts: ['L', 'M', 'H', 'J'] }),
-    fld('eq10a', { w: 14, hint: 'h.eq10a' }),
-    fld('eq10b', { w: 10, hint: 'h.eq10b' }),
+    fld('eq10a', { w: 14, hint: 'h.eq10a', pick: 'a' }),
+    fld('eq10b', { w: 10, hint: 'h.eq10b', pick: 'b' }),
   ];
   const MORE18 = ['sts', 'pbn', 'nav', 'com', 'dat', 'sur', 'reg', 'eet18', 'sel', 'typ', 'code', 'dle', 'orgn', 'per', 'ralt', 'talt', 'rif']
     .map((k) => fld(k, { w: k === 'sel' || k === 'per' ? 6 : 18, label: (k === 'eet18' ? 'EET' : k.toUpperCase()) + '/', hint: k === 'typ' ? 'h.typ' : null }));
@@ -164,8 +164,8 @@
       fld('reg', { w: 9, lk: 'f.item7', hint: 'h.item7' }),
       fld('acType', { w: 6, list: 'dl-ac' }),
       fld('wake', { type: 'seg', opts: ['L', 'M', 'H', 'J'] }),
-      fld('eq10a', { w: 14, hint: 'h.eq10a' }),
-      fld('eq10b', { w: 10, hint: 'h.eq10b' }),
+      fld('eq10a', { w: 14, hint: 'h.eq10a', pick: 'a' }),
+      fld('eq10b', { w: 10, hint: 'h.eq10b', pick: 'b' }),
       fld('speed', { w: 6, hint: 'h.speed' }),
       fld('endurance', { w: 5, ph: 'HHMM' }),
       fld('colour', { w: 28 }),
@@ -241,7 +241,7 @@
         });
         input.addEventListener('blur', () => { touched.add(sp.err || sp.k); onChange(null); });
         wrap = h('div', { class: 'field' + (sp.type === 'textarea' ? ' wide' : '') },
-          h('label', { for: id, class: 'lbl' }, label), input, hintEl, errEl);
+          h('label', { for: id, class: 'lbl' }, label), sp.pick ? equipPicker(sp, input, change) : input, hintEl, errEl);
       }
       rows.push({ sp, wrap, input, errEl, hintEl });
       return wrap;
@@ -297,6 +297,42 @@
     if (other) out.push(' · ', h('b', {}, other));
     return out;
   }
+  // Item 10 multi-select: checkbox grid that writes the code string in canonical order; typing stays in sync.
+  function equipPicker(sp, input, change) {
+    const codes = sp.pick === 'a' ? F.EQ10A : F.EQ10B;
+    const MODES = ['A', 'C', 'E', 'H', 'I', 'L', 'P', 'S', 'X']; // 10b: one transponder mode only
+    const desc = window.PDV_EQ[sp.pick];
+    const current = () => new Set(F.tokens(F.norm(input.value).replace(/ /g, ''), codes));
+    const boxes = codes.map((c) => {
+      const cb = h('input', { type: 'checkbox', value: c });
+      cb.addEventListener('change', () => toggle(c, cb.checked));
+      return { c, cb, el: h('label', { class: 'pick-item' }, cb, h('b', {}, c), h('span', {}, desc[c][lang === 'es' ? 0 : 1])) };
+    });
+    const panel = h('div', { class: 'picker', hidden: true }, boxes.map((b) => b.el));
+    const btn = h('button', { type: 'button', class: 'ghost pick-btn', 'aria-expanded': 'false', title: t('f.' + sp.k) }, '▾');
+    const wrap = h('span', { class: 'pick-wrap' }, input, btn);
+    const sync = () => { const s = current(); boxes.forEach((b) => (b.cb.checked = s.has(b.c))); };
+    function toggle(c, on) {
+      const s = current();
+      if (on) {
+        if (c === 'N') s.clear(); else s.delete('N');
+        if (sp.pick === 'b' && MODES.includes(c)) MODES.forEach((m) => s.delete(m));
+        s.add(c);
+      } else s.delete(c);
+      input.value = codes.filter((x) => s.has(x)).join('');
+      change(input.value);
+      sync();
+    }
+    btn.addEventListener('click', () => {
+      panel.hidden = !panel.hidden;
+      btn.setAttribute('aria-expanded', String(!panel.hidden));
+      wrap.closest('.field').classList.toggle('picking', !panel.hidden);
+      sync();
+    });
+    input.addEventListener('input', sync);
+    return h('span', { class: 'pick-box' }, wrap, panel);
+  }
+
   function localHint(v) {
     const c = F.norm(v);
     if (!/^([01]\d|2[0-3])[0-5]\d$/.test(c)) return 'HHMM';

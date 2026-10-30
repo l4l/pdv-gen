@@ -77,3 +77,31 @@ window.PDV_I18N = {
     'msg.pdfLib': 'Could not load the PDF library (offline?)',
   },
 };
+
+// Item 10 code descriptions [es, en] for the equipment picker (SUP A 94/2024, Casilla 10).
+window.PDV_EQ = {
+  a: {
+    N: ['Sin equipo / inoperativo', 'None / unserviceable'], S: ['Estándar: VHF + VOR + ILS', 'Standard: VHF + VOR + ILS'],
+    A: ['GBAS aterrizaje', 'GBAS landing'], B: ['LPV (APV con SBAS)', 'LPV (APV with SBAS)'], C: ['LORAN C', 'LORAN C'], D: ['DME', 'DME'],
+    E1: ['FMC WPR ACARS', 'FMC WPR ACARS'], E2: ['D-FIS ACARS', 'D-FIS ACARS'], E3: ['PDC ACARS', 'PDC ACARS'],
+    F: ['ADF', 'ADF'], G: ['GNSS', 'GNSS'], H: ['HF RTF', 'HF RTF'], I: ['Navegación inercial', 'Inertial navigation'],
+    J1: ['CPDLC ATN VDL2', 'CPDLC ATN VDL2'], J2: ['CPDLC FANS HFDL', 'CPDLC FANS HFDL'], J3: ['CPDLC FANS VDL A', 'CPDLC FANS VDL A'],
+    J4: ['CPDLC FANS VDL 2', 'CPDLC FANS VDL 2'], J5: ['CPDLC FANS SATCOM INMARSAT', 'CPDLC FANS SATCOM INMARSAT'],
+    J6: ['CPDLC FANS SATCOM MTSAT', 'CPDLC FANS SATCOM MTSAT'], J7: ['CPDLC FANS SATCOM Iridium', 'CPDLC FANS SATCOM Iridium'],
+    K: ['MLS', 'MLS'], L: ['ILS', 'ILS'], M1: ['SATVOICE INMARSAT', 'SATVOICE INMARSAT'], M2: ['SATVOICE MTSAT', 'SATVOICE MTSAT'],
+    M3: ['SATVOICE Iridium', 'SATVOICE Iridium'], O: ['VOR', 'VOR'], P1: ['RCP 400', 'RCP 400'], P2: ['RCP 240', 'RCP 240'], P3: ['RCP 180', 'RCP 180'],
+    R: ['Aprobación PBN (requiere PBN/)', 'PBN approved (needs PBN/)'], T: ['TACAN', 'TACAN'], U: ['UHF RTF', 'UHF RTF'], V: ['VHF RTF', 'VHF RTF'],
+    W: ['RVSM', 'RVSM'], X: ['MNPS / NAT HLA', 'MNPS / NAT HLA'], Y: ['VHF 8,33 kHz', 'VHF 8.33 kHz'],
+    Z: ['Otro (requiere NAV/, COM/ o DAT/)', 'Other (needs NAV/, COM/ or DAT/)'],
+  },
+  b: {
+    N: ['Sin transpondedor', 'No surveillance'], A: ['Modo A', 'Mode A'], C: ['Modo A + C (altitud)', 'Mode A + C (altitude)'],
+    E: ['Modo S + ADS-B (squitter ext.)', 'Mode S + ADS-B (ext. squitter)'], H: ['Modo S + vigilancia mejorada', 'Mode S + enhanced surveillance'],
+    I: ['Modo S sin altitud', 'Mode S, no altitude'], L: ['Modo S + ADS-B + vig. mejorada', 'Mode S + ADS-B + enhanced'],
+    P: ['Modo S con altitud, sin ident.', 'Mode S, altitude, no ident'], S: ['Modo S con altitud e ident.', 'Mode S, altitude and ident'],
+    X: ['Modo S sin altitud ni ident.', 'Mode S, no altitude or ident'],
+    B1: ['ADS-B 1090 out', 'ADS-B 1090 out'], B2: ['ADS-B 1090 out/in', 'ADS-B 1090 out/in'], U1: ['ADS-B UAT out', 'ADS-B UAT out'],
+    U2: ['ADS-B UAT out/in', 'ADS-B UAT out/in'], V1: ['ADS-B VDL4 out', 'ADS-B VDL4 out'], V2: ['ADS-B VDL4 out/in', 'ADS-B VDL4 out/in'],
+    D1: ['ADS-C FANS 1/A', 'ADS-C FANS 1/A'], G1: ['ADS-C ATN', 'ADS-C ATN'],
+  },
+};
