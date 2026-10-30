@@ -120,4 +120,4 @@ The "Generado con PDV-Gen…" footer is removed. The blue ink and the current pr
 If a pilot is selected and the PIC field is empty (for example after an import or an old saved flight), the PIC and "Presentado por" fields are filled in from the pilot. When there is exactly one pilot, they are selected automatically. Source: user report "pic not filled".
 
 ## D-026 — 2026-10-30 — Hosting on GitHub Pages
-The site is pushed to github.com/l4l/pdv-gen and served by GitHub Pages from `main` (repo root, static files with no build). The Tailscale host stays available for local use. Source: user.
+The site is pushed to github.com/l4l/pdv-gen and served by GitHub Pages from the `gh-pages` branch. A workflow mirrors `main` into that branch on every push, and the site is the repo root as static files with no build. The Tailscale host stays available for local use. Source: user.

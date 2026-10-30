@@ -14,7 +14,7 @@ A generator for ICAO flight plans (Plan de Vuelo) in the format ANAC Argentina e
 python3 -m http.server 9991 --bind "$(tailscale ip -4)"
 ```
 
-Opening `index.html` directly also works. jsPDF is loaded from cdnjs.
+Opening `index.html` directly also works. Hosted at https://l4l.github.io/pdv-gen/ (`gh-pages`, mirrored from `main` by `.github/workflows/pages.yml`). jsPDF is loaded from cdnjs.
 
 ## Test
 

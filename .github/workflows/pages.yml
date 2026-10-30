@@ -1,0 +1,15 @@
+# Mirror main to gh-pages on every push; GitHub Pages serves gh-pages as static files (D-026).
+name: pages
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git push --force origin HEAD:gh-pages
