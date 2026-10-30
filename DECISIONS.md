@@ -57,3 +57,40 @@ The list holds ICAO codes and national 3-letter codes (e.g. FDO ↔ SADF San Fer
 - A live preview of the ICAO FPL text sits beside the form for pros to check at a glance.
 - Codes are uppercased automatically, with keyboard-first input.
 Source: user.
+
+## D-012 — 2026-10-30 — A4 layout redrawn from SUP A 94/2024, with jsPDF
+The form is drawn as vectors with jsPDF from a pinned cdnjs URL, laid out like the official form in SUP A 94/2024 (p.8). It does not overlay a scanned template, because no official fillable PDF exists and the EANA paper pads are A4 ICAO model. Labels are bilingual and copied verbatim, sic typos included ("ADRESSE(S)", "ADDOTIONAL"), so the form is recognisable. The grey COM block is left empty for ARO. Source: research.
+
+## D-013 — 2026-10-30 — Optional drawn PIC signature
+The signature is drawn on a canvas and stored with the pilot profile as a PNG data URL. It is stamped into the "Firma del Comandante" area, which supports email filing (AIC A 19/2026: signed PDF to ARO/AIS). If there is no signature, the line is left blank. Source: user.
+
+## D-014 — 2026-10-30 — No phone/license/DNI on the form
+These are not official boxes. They are left out of the form and are not added to RMK/. Source: user.
+
+## D-015 — 2026-10-30 — ARO/AIS directory as post-generation hint
+The ARO/AIS office emails and phones from AIC A 19/2026 Anexo ALFA are bundled. After generation the app shows:
+- the departure office's email and phone
+- the suggested subject (Item 7)
+- a "call to confirm acceptance" reminder
+Nothing is sent from the app. Source: user.
+
+## D-016 — 2026-10-30 — Curated GA aircraft type list
+About 100 common Argentine GA Doc 8643 designators with wake category are used for autocomplete. Free entry is still accepted, and ZZZZ requires TYP/. Note: AB-115 = AB11, AB-180 = AB18, PA-28 variants = P28A/P28B/P28R. Source: user + ICAO Doc 8643.
+
+## D-017 — 2026-10-30 — Validation rules (blocking)
+Rules come from SUP A 94/2024 and PROGEN-ARO (Res. ANAC 35/2025):
+- Item 7: ≤7 alphanumerics.
+- Item 8 rules: I/V/Y/Z. Type: S/N/G/M/X.
+- If Item 7 is a registration, type of flight is G/M/N/X and OPR/ is required.
+- Item 9: 2–4 characters. ZZZZ requires TYP/. Wake: L/M/H/J.
+- Item 10a/10b: valid codes. R requires PBN/; Z requires NAV/, COM/ or DAT/.
+- Item 13/16: times HHMM.
+- ZZZZ requires DEP/, DEST/ or ALTN/.
+- Speed: K/N 4 digits or M 3 digits. Level: F/A 3 digits, S/M 4 digits, or VFR.
+- Y/Z requires a rule-change point in the route.
+- E/ (endurance) must be greater than EET.
+- DOF/: YYMMDD.
+- PBN/: ≤8 codes.
+- If DOF is not today, DOF/ is included automatically.
+- Uppercase is applied automatically.
+Source: research.
