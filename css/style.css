@@ -142,3 +142,28 @@ canvas.sig { width: 100%; max-width: 600px; aspect-ratio: 3 / 1; background: #ff
 .pick-item:hover { background: var(--panel); }
 .pick-item b { font-family: var(--mono); min-width: 2.2ch; }
 .pick-item:has(input:checked) { background: var(--panel); outline: 1px solid var(--accent); }
+
+/* QA fixes: disabled ghost, phone overflow, picker density, mobile action bar */
+.ghost:disabled { opacity: .45; cursor: not-allowed; }
+.primary:disabled { opacity: 1; background: var(--line); border-color: var(--line); color: var(--muted); }
+.sec > summary, .sec > legend { min-width: 0; }
+.sec-sum { min-width: 0; flex: 1 1 auto; }
+.field:not(.wide):not(.equip):not(.picking) .err,
+.field:not(.wide):not(.equip):not(.picking) .hint { max-width: max(calc(var(--w, 12ch) + 18px), 18ch); }
+.field.picking .hint { display: none; }
+.picker { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); max-height: 230px; }
+.pick-item { padding: 2px 4px; font-size: 11.5px; }
+.mobile-bar { display: none; }
+@media (max-width: 960px) {
+  .flight { grid-template-columns: minmax(0, 1fr); }
+  .top { position: static; }
+  .preview-col { position: static; }
+  body[data-tab="flight"] .mobile-bar {
+    display: flex; align-items: center; gap: 10px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: var(--panel); border-top: 1px solid var(--line);
+  }
+  .mobile-bar .status { flex: 1; margin: 0; }
+  body[data-tab="flight"] main { padding-bottom: 90px; }
+  .pick-actions button { padding: 4px 9px; font-size: 12px; }
+  .tools button { padding: 4px 9px; font-size: 12px; }
+}

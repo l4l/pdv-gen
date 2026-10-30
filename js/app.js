@@ -123,12 +123,13 @@
   const FLIGHT_SECTIONS = [
     { id: 'aircraft', title: 's.aircraft', items: '7–10', fold: true, summary: (s) => {
       const n = F.normalize(s);
+      if (!n.item7) return '';
       return [n.item7, n.rules + n.flightType, (n.number || '') + n.acType + '/' + n.wake, n.eq10a + '/' + n.eq10b].join(' · ');
     }, fields: AIRCRAFT_FIELDS },
     { id: 'dep', title: 's.dep', items: '13', fields: [
       fld('dep', { w: 6, list: 'dl-ad', ad: true }),
       fld('date', { type: 'date', up: false }),
-      fld('eobt', { w: 5, ph: 'HHMM', localTime: true }),
+      fld('eobt', { w: 5, localTime: true }),
       fld('depName', { w: 30, show: (s) => ['ZZZZ', 'AFIL'].includes(F.norm(s.dep)) }),
     ] },
     { id: 'route', title: 's.route', items: '15', fields: [
@@ -240,7 +241,7 @@
           change(input.value);
         });
         input.addEventListener('blur', () => { touched.add(sp.err || sp.k); onChange(null); });
-        wrap = h('div', { class: 'field' + (sp.type === 'textarea' ? ' wide' : '') },
+        wrap = h('div', { class: 'field' + (sp.type === 'textarea' ? ' wide' : ''), style: `--w:${sp.w}ch` },
           h('label', { for: id, class: 'lbl' }, label), sp.pick ? equipPicker(sp, input, change) : input, hintEl, errEl);
       }
       rows.push({ sp, wrap, input, errEl, hintEl });
@@ -285,6 +286,14 @@
         }
       },
       firstError() { return rows.find((r) => r.wrap.classList.contains('bad')); },
+      // Push a programmatic state change back into its control without rebuilding (keeps focus).
+      sync(path) {
+        const r = rows.find((x) => x.sp.k === path);
+        if (!r) return;
+        const v = get(state, path);
+        if (r.sp.type === 'seg') $$('button', r.input).forEach((b) => b.setAttribute('aria-checked', String(b.textContent === v)));
+        else if (r.input) r.input.value = v ?? '';
+      },
     };
   }
 
@@ -365,7 +374,7 @@
   function onFlightChange(path) {
     if (path === 'acType') { // suggest wake category from the curated list
       const a = acByType.get(F.norm(cur.acType));
-      if (a && cur.wake !== a.w) { cur.wake = a.w; renderFlight(); return; }
+      if (a && cur.wake !== a.w) { cur.wake = a.w; flightForm.sync('wake'); }
     }
     if (path === 'pic' && (!cur.filedBy || cur.filedBy === cur._lastPic)) {
       cur.filedBy = cur.pic;
@@ -380,14 +389,17 @@
   function refreshFlight() {
     const errors = F.validate(cur);
     flightForm.update(errors, showAll);
-    $('#fpl-msg').textContent = F.message(cur);
-    $('#fpl-19').textContent = F.item19(F.normalize(cur)) || '—';
+    const blank = !cur.item7 && !cur.planeId; // nothing chosen yet: don't greet with a wall of errors
+    $('#fpl-msg').textContent = blank ? '—' : F.message(cur);
+    $('#fpl-19').textContent = (!blank && F.item19(F.normalize(cur))) || '—';
     const n = Object.keys(errors).length;
-    const st = $('#status');
-    st.className = 'status ' + (n ? 'bad' : 'ok');
-    st.textContent = n ? n + ' ' + t('p.errors') : '✓ ' + t('p.ok');
-    $('#btn-pdf').disabled = n > 0;
-    $('#btn-view').disabled = n > 0;
+    const text = blank ? t('p.start') : n ? n + ' ' + t(n === 1 ? 'p.error1' : 'p.errors') : '✓ ' + t('p.ok');
+    for (const st of $$('.status')) {
+      st.className = 'status ' + (blank ? '' : n ? 'bad' : 'ok');
+      st.textContent = text;
+    }
+    for (const b of $$('.btn-pdf, #btn-view')) b.disabled = n > 0;
+    if (blank) $('#flight-form [data-sec="aircraft"]').open = true;
     renderAro();
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => { db.current = cur; persist(); }, 300);
@@ -470,7 +482,8 @@
       h('span', { class: 'mono' }, d.label),
       h('span', { class: 'row-actions' },
         h('button', { class: 'ghost small', onclick: () => {
-          cur = clone(d); cur.date = cur.date < todayUTC() ? todayUTC() : cur.date; showAll = false; dlg.close(); renderFlight();
+          const { id, label, savedAt, ...flight } = clone(d);
+          cur = { ...flight, draftId: id }; cur.date = cur.date < todayUTC() ? todayUTC() : cur.date; showAll = false; dlg.close(); renderFlight();
         } }, t('btn.load')),
         confirmBtn(() => { db.drafts = db.drafts.filter((x) => x.id !== d.id); persist(); openDrafts(); })))) : [h('p', { class: 'empty' }, t('empty.drafts'))];
     $('#drafts-body').replaceChildren(h('h3', {}, t('btn.drafts')), ...list,
@@ -509,23 +522,25 @@
     const dlg = $('#dlg-plane'), form = $('#plane-form');
     let showAllP = false;
     const ui = buildForm(form, PLANE_SECTIONS, p, (path) => {
-      if (path === 'acType') { const a = acByType.get(F.norm(p.acType)); if (a && p.wake !== a.w) { p.wake = a.w; rebuild(); return; } }
+      if (path === 'acType') { const a = acByType.get(F.norm(p.acType)); if (a && p.wake !== a.w) { p.wake = a.w; ui.sync('wake'); } }
       ui.update(validatePlane(p), showAllP);
     });
-    function rebuild() { dlg.close(); editPlane(p, isNew); }
+    const save = () => {
+      const e = validatePlane(p);
+      if (!p.reg) e.reg = { es: 'Obligatorio', en: 'Required' };
+      if (Object.keys(e).length) { showAllP = true; ui.update(e, true); return; }
+      p.reg = F.norm(p.reg); p.acType = F.norm(p.acType);
+      const i = db.planes.findIndex((x) => x.id === p.id);
+      if (i >= 0) db.planes[i] = p; else db.planes.push(p);
+      persist(); dlg.close(); renderPlanes();
+      if (cur.planeId === p.id || !cur.planeId) applyPlane(p); else renderSelects();
+      toast(t('msg.saved'));
+    };
+    form.onsubmit = (ev) => { ev.preventDefault(); save(); };
+    form.prepend(h('h3', {}, isNew ? t('dlg.newPlane') : t('dlg.editPlane') + ' ' + plane.reg));
     form.append(h('div', { class: 'dlg-actions' },
       h('button', { class: 'ghost', type: 'button', onclick: () => dlg.close() }, t('btn.cancel')),
-      h('button', { class: 'primary', type: 'button', onclick: () => {
-        const e = validatePlane(p);
-        if (!p.reg) e.reg = { es: 'Obligatorio', en: 'Required' };
-        if (Object.keys(e).length) { showAllP = true; ui.update(e, true); return; }
-        p.reg = F.norm(p.reg); p.acType = F.norm(p.acType);
-        const i = db.planes.findIndex((x) => x.id === p.id);
-        if (i >= 0) db.planes[i] = p; else db.planes.push(p);
-        persist(); dlg.close(); renderPlanes();
-        if (cur.planeId === p.id || !cur.planeId) applyPlane(p); else renderSelects();
-        toast(t('msg.saved'));
-      } }, t('btn.save'))));
+      h('button', { class: 'primary', type: 'submit' }, t('btn.save'))));
     ui.update(validatePlane(p), false);
     if (!dlg.open) dlg.showModal();
   }
@@ -549,22 +564,24 @@
     const name = h('input', { type: 'text', value: p.name || '', id: 'pilot-name' });
     const err = h('small', { class: 'err' });
     const pad = signaturePad(p.signature);
+    form.onsubmit = (ev) => { ev.preventDefault(); save(); };
+    function save() {
+      if (!name.value.trim()) { err.textContent = lang === 'es' ? 'Obligatorio' : 'Required'; return; }
+      p.name = name.value.trim(); p.signature = pad.value();
+      const i = db.pilots.findIndex((x) => x.id === p.id);
+      if (i >= 0) db.pilots[i] = p; else db.pilots.push(p);
+      persist(); dlg.close(); renderPilots();
+      if (cur.pilotId === p.id || !cur.pilotId) applyPilot(p); else renderSelects();
+      toast(t('msg.saved'));
+    }
     form.replaceChildren(
-      h('h3', {}, t('tab.pilots')),
+      h('h3', {}, t('dlg.pilot')),
       h('div', { class: 'field wide' }, h('label', { for: 'pilot-name', class: 'lbl' }, t('f.name')), name, err),
       h('div', { class: 'field wide' }, h('span', { class: 'lbl' }, t('f.signature')), pad.el, h('small', { class: 'hint' }, t('h.signature'))),
       h('div', { class: 'dlg-actions' },
         h('button', { class: 'ghost', type: 'button', onclick: () => pad.clear() }, t('btn.clear')),
         h('button', { class: 'ghost', type: 'button', onclick: () => dlg.close() }, t('btn.cancel')),
-        h('button', { class: 'primary', type: 'button', onclick: () => {
-          if (!name.value.trim()) { err.textContent = lang === 'es' ? 'Obligatorio' : 'Required'; return; }
-          p.name = name.value.trim(); p.signature = pad.value();
-          const i = db.pilots.findIndex((x) => x.id === p.id);
-          if (i >= 0) db.pilots[i] = p; else db.pilots.push(p);
-          persist(); dlg.close(); renderPilots();
-          if (cur.pilotId === p.id || !cur.pilotId) applyPilot(p); else renderSelects();
-          toast(t('msg.saved'));
-        } }, t('btn.save'))));
+        h('button', { class: 'primary', type: 'submit' }, t('btn.save'))));
     if (!dlg.open) dlg.showModal();
     name.focus();
   }
@@ -642,6 +659,7 @@
   function showTab(name) {
     for (const b of $$('[data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === name));
     for (const s of $$('.tab')) s.hidden = s.id !== 'tab-' + name;
+    document.body.dataset.tab = name;
     try { sessionStorage.setItem('pdvgen.tab', name); } catch (e) { /* ignore */ }
   }
   function applyLang() {
@@ -659,7 +677,7 @@
   $('#btn-save-draft').addEventListener('click', saveDraft);
   $('#btn-drafts').addEventListener('click', openDrafts);
   $('#btn-copy').addEventListener('click', () => copy(F.message(cur) + '\n' + F.item19(F.normalize(cur))));
-  $('#btn-pdf').addEventListener('click', () => { const d = makePdf(); if (d) d.save(pdfName()); });
+  $$('.btn-pdf').forEach((b) => b.addEventListener('click', () => { const d = makePdf(); if (d) d.save(pdfName()); }));
   $('#btn-view').addEventListener('click', () => { const d = makePdf(); if (d) window.open(d.output('bloburl'), '_blank'); });
   $('#btn-add-plane').addEventListener('click', () => editPlane(newPlane(), true));
   $('#btn-add-pilot').addEventListener('click', () => editPilot({ id: S.uid(), name: '', signature: null }));
@@ -667,11 +685,11 @@
   $('#btn-import').addEventListener('click', () => $('#file-import').click());
   $('#file-import').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) doImport(f); e.target.value = ''; });
   // The PDF buttons are disabled while errors exist; clicking the status reveals them all.
-  $('#status').addEventListener('click', () => { showAll = true; refreshFlight(); const r = flightForm.firstError(); if (r) r.wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  $$('.status').forEach((s) => s.addEventListener('click', () => { showAll = true; refreshFlight(); const r = flightForm.firstError(); if (r) r.wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }));
 
   persist();
   applyLang();
   let tab = 'flight';
-  try { tab = sessionStorage.getItem('pdvgen.tab') || (db.planes.length ? 'flight' : 'planes'); } catch (e) { /* ignore */ }
+  try { tab = db.planes.length ? sessionStorage.getItem('pdvgen.tab') || 'flight' : 'planes'; } catch (e) { /* ignore */ }
   showTab(tab);
 })();
