@@ -134,3 +134,6 @@ Open item: confirm whether AMDT AIP 1/2026 reissued ENR 1.10. This needs to be c
 
 ## D-028 — 2026-10-30 — DOF/ always included again
 This reverts D-023 and restores D-018: DOF/ is always derived from the flight date. Source: user ("leave back dof").
+
+## D-029 — 2026-10-30 — PDF labels follow EANA's paper form
+The user said the SUP A 94/2024 template is outdated. EANA's FPL print specification (eana.com.ar, 5000277 ESPECIFICACION TECNICA FPL) shows the form used on ARO/AIS pads: the ICAO PANS-ATM Spanish edition. Its labels are adopted, for example "Piloto al mando", "Identificación de la aeronave", "Equipo radio de emergencia" and "ADDITIONAL" spelled correctly. The signature caption is dropped. Layout and blue ink are unchanged (D-024). This supersedes the label part of D-012. Source: user + EANA.
