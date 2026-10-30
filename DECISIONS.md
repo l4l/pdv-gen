@@ -25,3 +25,26 @@ AIP SUP A 94/2024 (ANAC, 31-Jul-2024) replaces AIP Vol I ENR 1.10. It is aligned
 - Item 18 is `0` when empty, with indicators in the Doc 4444 order.
 - Item 19 is not transmitted.
 Source: https://ais.anac.gob.ar/descarga/sup-66aa4470bad17
+
+## D-007 — 2026-10-30 — Saved entities: planes, pilots, flight drafts
+All three are stored in localStorage and included in import/export. Source: user.
+
+## D-008 — 2026-10-30 — "Full" plane profile
+A plane stores:
+- registration (Item 7) and type
+- wake category
+- Item 10a and 10b
+- PBN/NAV/COM/SUR/DAT/CODE/SEL
+- cruise speed
+- endurance
+- Item 19 R/, S/, J/, D/
+- colour and markings
+- operator (OPR/)
+- notes
+These prefill the flight form. Source: user.
+
+## D-009 — 2026-10-30 — Validation blocks PDF generation
+Errors are shown inline, and the PDF button stays disabled until all errors are cleared. Source: user.
+
+## D-010 — 2026-10-30 — Bundled aerodrome list, suggestive only
+The list holds ICAO codes and national 3-letter codes (e.g. FDO ↔ SADF San Fernando), with codes taken from the ANAC AIC. It is used only for autocomplete and hints, and any value is accepted. Local 3-letter codes are legitimate in Items 13 and 16 and in RALT/TALT (SUP A 94/2024 §Casilla 13/16), so they are not rewritten to ZZZZ. ZZZZ plus DEP/DEST/ALTN is still supported for places that have no code. Source: user + SUP.
