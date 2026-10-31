@@ -42,7 +42,7 @@
       const label = a.n + (a.p ? ', ' + a.p : '') + (a.x ? ' (' + t('ad.closed') + ')' : '');
       const out = [];
       if (a.i) out.push(h('option', { value: a.i }, (a.l ? a.l + ' · ' : '') + label));
-      if (a.l) out.push(h('option', { value: a.l }, (a.i ? a.i + ' · ' : '') + label));
+      if (a.l && !a.i) out.push(h('option', { value: a.l }, label));
       return out;
     }));
     $('#dl-ac').replaceChildren(...AC.map((a) => h('option', { value: a.t }, a.n + ' · ' + a.w)));
@@ -231,7 +231,10 @@
           }
           change(input.value);
         });
-        input.addEventListener('blur', () => { touched.add(sp.err || sp.k); onChange(null); });
+        input.addEventListener('blur', () => {
+          if (sp.ad) { const icao = toIcao(input.value); if (icao !== F.norm(input.value)) { input.value = icao; set(state, sp.k, icao); } }
+          touched.add(sp.err || sp.k); onChange(null);
+        });
         wrap = h('div', { class: 'field' + (sp.type === 'textarea' ? ' wide' : ''), style: `--w:${sp.w}ch` },
           h('label', { for: id, class: 'lbl' }, label), sp.pick ? equipPicker(sp, input, change) : input, hintEl, errEl);
       }
@@ -284,6 +287,12 @@
         else if (r.input) r.input.value = v ?? '';
       },
     };
+  }
+
+  function toIcao(v) {
+    const c = F.norm(v);
+    const a = adByCode.get(c);
+    return a && a.i ? a.i : c;
   }
 
   function adHint(code) {
@@ -354,6 +363,7 @@
 
   function renderFlight() {
     if (!cur.pilotId && db.pilots.length === 1) cur.pilotId = db.pilots[0].id;
+    for (const k of ['dep', 'dest', 'altn1', 'altn2']) if (cur[k]) cur[k] = toIcao(cur[k]);
     const pilot = pilotOf();
     if (pilot && !F.norm(cur.pic)) { cur.pic = pilot.name; cur._lastPic = pilot.name; if (!F.norm(cur.filedBy)) cur.filedBy = pilot.name; }
     renderSelects();

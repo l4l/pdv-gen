@@ -137,3 +137,6 @@ This reverts D-023 and restores D-018: DOF/ is always derived from the flight da
 
 ## D-029 — 2026-10-30 — PDF labels follow EANA's paper form
 The user said the SUP A 94/2024 template is outdated. EANA's FPL print specification (eana.com.ar, 5000277 ESPECIFICACION TECNICA FPL) shows the form used on ARO/AIS pads: the ICAO PANS-ATM Spanish edition. Its labels are adopted, for example "Piloto al mando", "Identificación de la aeronave", "Equipo radio de emergencia" and "ADDITIONAL" spelled correctly. The signature caption is dropped. Layout and blue ink are unchanged (D-024). This supersedes the label part of D-012. Source: user + EANA.
+
+## D-030 — 2026-10-31 — ICAO indicators for aerodromes
+Departure, destination and alternates are converted to the ICAO indicator whenever one exists (FDO→SADF, PAL→SADP). This happens on blur and when a saved flight is loaded. Autocomplete lists ICAO codes, and matching by the local code still works through the option label. Aerodromes that have only a national 3-letter code keep it. This supersedes the "not rewritten" part of D-010. Source: user.
