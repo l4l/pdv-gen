@@ -140,3 +140,6 @@ The user said the SUP A 94/2024 template is outdated. EANA's FPL print specifica
 
 ## D-030 — 2026-10-31 — ICAO indicators for aerodromes
 Departure, destination and alternates are converted to the ICAO indicator whenever one exists (FDO→SADF, PAL→SADP). This happens on blur and when a saved flight is loaded. Autocomplete lists ICAO codes, and matching by the local code still works through the option label. Aerodromes that have only a national 3-letter code keep it. This supersedes the "not rewritten" part of D-010. Source: user.
+
+## D-031 — 2026-10-31 — PDF drawn over EANA's form image
+The user supplied an EANA-issued FPL PDF as the new template. The vector re-drawing of the form is replaced with that form's blank background image: a 150 dpi A4 JPEG converted to greyscale and embedded in `data/form.js`. Values are overlaid at box positions measured from the image. Fixed-length codes are spread across equal cells, and free text is drawn in the blue ink (D-020). Items not carried in Item 19 are still crossed out in blue instead of filled black as in EANA's sample. The proportions from D-020/D-024 no longer apply because the layout is EANA's. This supersedes D-029's drawn labels. Source: user.

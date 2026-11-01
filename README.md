@@ -4,7 +4,7 @@ A generator for ICAO flight plans (Plan de Vuelo) in the format ANAC Argentina e
 
 - Saved **aircraft** and **pilots** fill in the form for you. Signatures are optional and drawn on screen.
 - Validation follows SUP A 94/2024 and PROGEN-ARO, and the PDF is blocked while any errors remain.
-- The PDF is an A4 copy of the official bilingual form, and a live FPL message preview is shown.
+- The PDF is filled over the EANA bilingual form (A4), and a live FPL message preview is shown.
 - JSON **import/export** covers aircraft, pilots and saved flights.
 - Hints for the ARO/AIS office (email and phone, from AIC A 19/2026) and autocomplete for aerodromes (ANAC MADHEL) and aircraft types.
 
