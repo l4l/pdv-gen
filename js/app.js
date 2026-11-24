@@ -65,6 +65,8 @@
     for (const k of PLANE_KEYS) o[k] = clone(p[k] ?? '');
     return o;
   };
+  // PIC as written in Item 19 C/: name followed by license type and number, e.g. "Juan Pérez PPA 12345678".
+  const picText = (p) => [p.name, p.license].map((x) => (x || '').trim()).filter(Boolean).join(' ');
   const newFlight = (plane, pilot) => ({
     planeId: plane ? plane.id : '', pilotId: pilot ? pilot.id : '',
     rules: 'V', flightType: 'G', number: '', item7: '', acType: '', wake: '', eq10a: '', eq10b: '',
@@ -72,7 +74,7 @@
     dest: '', destName: '', eet: '', altn1: '', altn2: '', altnName: '',
     sts: '', pbn: '', nav: '', com: '', dat: '', sur: '', reg: '', eet18: '', sel: '', typ: '', code: '', dle: '',
     opr: '', orgn: '', per: '', ralt: '', talt: '', rif: '', rmk: '',
-    endurance: '', pob: '', colour: '', remarks: '', pic: pilot ? pilot.name : '', filedBy: pilot ? pilot.name : '',
+    endurance: '', pob: '', colour: '', remarks: '', pic: pilot ? picText(pilot) : '', filedBy: '',
     ...EQUIP(), ...(plane ? planeToFlight(plane) : {}),
   });
 
@@ -357,7 +359,7 @@
     $('#sel-plane').replaceChildren(opt('', t('sel.none')), ...db.planes.map((p) =>
       opt(p.id, p.reg + ' · ' + p.acType, p.id === cur.planeId)));
     $('#sel-pilot').replaceChildren(opt('', t('sel.none')), ...db.pilots.map((p) =>
-      opt(p.id, p.name, p.id === cur.pilotId)));
+      opt(p.id, picText(p), p.id === cur.pilotId)));
     $('#no-plane').hidden = db.planes.length > 0;
   }
 
@@ -365,7 +367,8 @@
     if (!cur.pilotId && db.pilots.length === 1) cur.pilotId = db.pilots[0].id;
     for (const k of ['dep', 'dest', 'altn1', 'altn2']) if (cur[k]) cur[k] = toIcao(cur[k]);
     const pilot = pilotOf();
-    if (pilot && !F.norm(cur.pic)) { cur.pic = pilot.name; cur._lastPic = pilot.name; if (!F.norm(cur.filedBy)) cur.filedBy = pilot.name; }
+    if ('_lastPic' in cur) { if (cur.filedBy === cur._lastPic) cur.filedBy = ''; delete cur._lastPic; }
+    if (pilot && !F.norm(cur.pic)) cur.pic = picText(pilot);
     renderSelects();
     flightForm = buildForm($('#flight-form'), FLIGHT_SECTIONS, cur, onFlightChange);
     refreshFlight();
@@ -378,12 +381,6 @@
 
   function onFlightChange(path) {
     if (path === 'acType') suggestWake(cur, flightForm);
-    if (path === 'pic' && (!cur.filedBy || cur.filedBy === cur._lastPic)) {
-      cur.filedBy = cur.pic;
-      const fb = $('#flight-form [name="filedBy"]');
-      if (fb) fb.value = cur.pic;
-    }
-    cur._lastPic = cur.pic;
     refreshFlight();
   }
 
@@ -441,18 +438,27 @@
   }
   function applyPilot(pilot) {
     cur.pilotId = pilot ? pilot.id : '';
-    if (pilot) { cur.pic = pilot.name; cur.filedBy = pilot.name; cur._lastPic = pilot.name; }
+    if (pilot) cur.pic = picText(pilot);
     renderFlight();
   }
 
+  // The pilot whose signature goes on the form: the one named in the PIC field. The license part may be
+  // typed by hand, so a PIC that starts with the pilot's name also matches.
+  function picPilot() {
+    const pic = F.norm(cur.pic);
+    if (!pic) return null;
+    const ps = [pilotOf(), ...db.pilots].filter(Boolean);
+    return ps.find((p) => F.norm(picText(p)) === pic)
+      || ps.find((p) => { const nm = F.norm(p.name); return nm && (pic === nm || pic.startsWith(nm + ' ')); }) || null;
+  }
   function pdfInput() {
     const n = F.normalize(cur);
-    const pilot = pilotOf();
+    const pilot = picPilot();
     return {
       ...n, item18: F.item18(n),
       colour: F.norm(cur.colour), remarks: F.norm(cur.remarks), pic: F.norm(cur.pic), filedBy: F.norm(cur.filedBy),
       dinghies: { ...n.dinghies, number: F.norm(n.dinghies.number), capacity: F.norm(n.dinghies.capacity), colour: F.norm(n.dinghies.colour) },
-      signature: pilot && pilot.signature && F.norm(pilot.name) === F.norm(cur.pic) ? pilot.signature : null,
+      signature: pilot && pilot.signature ? pilot.signature : null,
     };
   }
   function showErrors() {
@@ -552,7 +558,7 @@
     if (!db.pilots.length) { list.replaceChildren(h('p', { class: 'empty' }, t('empty.pilots'))); return; }
     list.replaceChildren(...db.pilots.map((p) => h('div', { class: 'card' },
       h('div', { class: 'card-main' },
-        h('div', { class: 'card-title' }, p.name),
+        h('div', { class: 'card-title' }, picText(p)),
         p.signature ? h('img', { class: 'sig-thumb', src: p.signature, alt: '' }) : null),
       h('div', { class: 'row-actions' },
         h('button', { class: 'ghost small', onclick: () => editPilot(p) }, t('btn.edit')),
@@ -563,12 +569,14 @@
     const p = clone(pilot);
     const dlg = $('#dlg-pilot'), form = $('#pilot-form');
     const name = h('input', { type: 'text', value: p.name || '', id: 'pilot-name' });
+    const license = h('input', { type: 'text', value: p.license || '', id: 'pilot-license', class: 'up', placeholder: 'PPA 12345678' });
+    license.addEventListener('input', () => { license.value = license.value.toUpperCase(); });
     const err = h('small', { class: 'err' });
     const pad = signaturePad(p.signature);
     form.onsubmit = (ev) => { ev.preventDefault(); save(); };
     function save() {
       if (!name.value.trim()) { err.textContent = lang === 'es' ? 'Obligatorio' : 'Required'; return; }
-      p.name = name.value.trim(); p.signature = pad.value();
+      p.name = name.value.trim(); p.license = license.value.trim().toUpperCase(); p.signature = pad.value();
       const i = db.pilots.findIndex((x) => x.id === p.id);
       if (i >= 0) db.pilots[i] = p; else db.pilots.push(p);
       persist(); dlg.close(); renderPilots();
@@ -578,6 +586,7 @@
     form.replaceChildren(
       h('h3', {}, t('dlg.pilot')),
       h('div', { class: 'field wide' }, h('label', { for: 'pilot-name', class: 'lbl' }, t('f.name')), name, err),
+      h('div', { class: 'field wide' }, h('label', { for: 'pilot-license', class: 'lbl' }, t('f.license')), license, h('small', { class: 'hint' }, t('h.license'))),
       h('div', { class: 'field wide' }, h('span', { class: 'lbl' }, t('f.signature')), pad.el, h('small', { class: 'hint' }, t('h.signature'))),
       h('div', { class: 'dlg-actions' },
         h('button', { class: 'ghost', type: 'button', onclick: () => pad.clear() }, t('btn.clear')),
@@ -678,7 +687,7 @@
   $$('.btn-pdf').forEach((b) => b.addEventListener('click', () => { const d = makePdf(); if (d) d.save(pdfName()); }));
   $('#btn-view').addEventListener('click', () => { const d = makePdf(); if (d) window.open(d.output('bloburl'), '_blank'); });
   $('#btn-add-plane').addEventListener('click', () => editPlane(newPlane(), true));
-  $('#btn-add-pilot').addEventListener('click', () => editPilot({ id: S.uid(), name: '', signature: null }));
+  $('#btn-add-pilot').addEventListener('click', () => editPilot({ id: S.uid(), name: '', license: '', signature: null }));
   $('#btn-export').addEventListener('click', doExport);
   $('#btn-import').addEventListener('click', () => $('#file-import').click());
   $('#file-import').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) doImport(f); e.target.value = ''; });
