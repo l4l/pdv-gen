@@ -480,7 +480,13 @@
   function saveDraft() {
     const n = F.normalize(cur);
     const label = [n.item7, (n.dep || '?') + '→' + (n.dest || '?'), cur.date, n.eobt && n.eobt + 'Z'].filter(Boolean).join(' ');
-    const d = { ...clone(cur), id: cur.draftId || S.uid(), label, savedAt: new Date().toISOString() };
+    // Re-saving updates the loaded draft only while it is the same trip; a different aircraft, aerodromes
+    // or route is saved as a new draft instead of overwriting the old one.
+    const trip = (f) => { const x = F.normalize(f); return [x.item7, x.dep, x.dest, x.route].join('|'); };
+    const prev = db.drafts.find((x) => x.id === cur.draftId);
+    const id = prev && trip(prev) === trip(cur) ? prev.id : S.uid();
+    const d = { ...clone(cur), id, label, savedAt: new Date().toISOString() };
+    delete d.draftId;
     cur.draftId = d.id;
     const i = db.drafts.findIndex((x) => x.id === d.id);
     if (i >= 0) db.drafts[i] = d; else db.drafts.unshift(d);
